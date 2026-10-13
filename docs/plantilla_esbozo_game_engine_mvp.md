@@ -214,9 +214,48 @@ Una estructura rellenable para ordenar ideas, detectar incongruencias y preparar
 | **Empaquetado** | Obligatorio | Validar referencias, generar un manifiesto versionado y copiar o agrupar los recursos necesarios para distribuir la demostración. |
 | **Networking** | Post-MVP | Implementar un único modelo inicial para conectar dos clientes y replicar dos entidades en una escena de prueba independiente. |
 
-### Limites del editor minimo
+#### Decisiones técnicas relacionadas con el alcance
 
-![alt text](image.png)
+- **Input de escritorio:** GLFW será la implementación inicial para Linux y Windows.
+- **Input en Android:** se implementará mediante la capa de plataforma correspondiente, conservando una API de input común.
+- **Física y colisiones:** se utilizará Box2D u otra biblioteca externa compatible con las plataformas objetivo.
+- **Audio:** se utilizará una biblioteca externa con soporte para Linux, Android y, posteriormente, Windows.
+- **Networking:** no será necesario para aprobar el MVP narrativo. Su diseño e implementación se realizarán después de validar la experiencia offline.
+- **Empaquetado:** el MVP no incluirá cifrado, compresión avanzada, actualizaciones incrementales ni protección contra extracción.
+- **Plataforma de referencia:** Linux será la plataforma principal de desarrollo y validación.
+- **Plataforma móvil obligatoria:** Android deberá ejecutar la demostración narrativa en el dispositivo físico disponible.
+- **Compatibilidad adicional:** Windows será importante, pero no bloqueará la aprobación del MVP principal.
+
+#### Incluido en el editor mínimo
+
+- Crear, abrir y guardar escenas.
+- Crear y eliminar entidades.
+- Modificar posición, rotación y escala.
+- Asignar sprites.
+- Configurar colliders y triggers.
+- Asignar un diálogo a una entidad.
+- Configurar el punto de aparición del jugador.
+- Validar referencias a recursos y diálogos.
+- Mostrar errores de validación comprensibles.
+
+#### Fuera del editor mínimo
+
+- Editor gráfico completo de árboles de diálogo.
+- Editor avanzado de animaciones.
+- Editor visual completo de UI.
+- Scripting visual.
+- Sistema avanzado de prefabs.
+- Editor de partículas.
+- Editor de shaders.
+- Sistema público de plugins.
+
+
+#### Regla de validación del alcance
+El alcance del MVP se considerará válido cuando cada sistema marcado como obligatorio sea utilizado por la demostración narrativa y cada paso obligatorio de la demostración esté respaldado por uno o más sistemas incluidos en esta sección.
+
+Los sistemas condicionales solo pasarán a ser obligatorios cuando exista una acción concreta de la demostración que dependa de ellos.
+
+Las funciones clasificadas como no bloqueantes o post-MVP no impedirán aprobar el MVP narrativo.
 
 ### 3.4 Fuera del MVP
 
