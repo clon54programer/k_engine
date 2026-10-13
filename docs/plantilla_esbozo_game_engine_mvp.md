@@ -187,30 +187,36 @@ Una estructura rellenable para ordenar ideas, detectar incongruencias y preparar
 
 ### 3.3 Alcance del MVP
 
-| Sistema | Obligatorio | Criterio mínimo |
-| :--- | :--- | :--- |
-| **Aplicación y logging** | Sí | Iniciar y cerrar correctamente; registrar errores de carga, recursos y guardado |
-| **Render 2D** | Sí | Renderizar sprites con transparencia, orden por capas, cámara 2D y viewport adaptable a las resoluciones admitidas.|
-| **Input** | Sí | Teclado en escritorio y controles táctiles básicos en Android |
-| **Recursos** | Sí | Cargar texturas, retratos, fuentes, música, efectos, escenas y datos narrativos |
-| **Escenas** | Sí | Cargar y cambiar escenas; restaurar la escena activa, el punto de aparición y los cambios persistentes desde una partida guardada. |
-|**Interacción**|si|Detectar una entidad interactuable cercana, mostrar una indicación y ejecutar una acción o iniciar un diálogo al recibir input.|
-|**UI narrativa**|si|Obligatorio|Mostrar nombre, retrato, texto, avance y opciones de respuesta en escritoria y andorid
-|**Diálogos**|si|Cargar diálogos desde datos externos, avanzar por nodos y detectar referencias inválidas.|
-|**Decisiones narrativas**|si|Presentar al menos dos opciones, registrar la opción seleccionada y continuar por la rama correspondiente.|
-|**Estado narrativo**|si|Guardar la escena activa, punto de aparición y variables narrativas; restaurar el estado después de reiniciar y manejar archivos inválidos sin cerrar inesperadamente el juego.|
-|**Consecuencias**|si|Una decisión cambia un diálogo, evento, interacción o escena|
-|**Guardado y carga**|si|Guardar escena y variables narrativas; restaurarlas después de reiniciar|
-|**Colisiones 2D**|si|Obstáculos estáticos, collider del jugador y triggers|
-| **Audio** | Sí | Reproducir música y al menos un efecto de sonido |
-|**Física dinámica**|si|Un cuerpo dinámico interactúa correctamente con el escenario y el jugador|
-| **Networking** | Post-MVP | Un solo modelo inicial; conexión y replicación de dos entidades |
-| **Windows** | Condicional o no bloqueante.| Build Release ejecutable |
-| **Linux** | Sí, es mi sistema principal | Build instalable en el dispositivo disponible; ejecutar la demo offline, aceptar controles táctiles, cargar recursos y guardar/restaurar el estado.|
-| **Android** | Sí | APK/paquete instalable y probado |
-| **Editor mínimo** | Sí | Crear o abrir una escena; posicionar entidades; modificar Transform; asignar sprites, colliders y diálogos; guardar y validar referencias.|
-| **Animación 2D** | Sí | Reproducir animaciones por sprites para reposo, movimiento e interacción |
-| **Empaquetado** | Sí | Validar referencias, generar un manifiesto versionado y copiar o agrupar exclusivamente los recursos necesarios para la distribución.|
+### 3.3 Alcance del MVP
+
+| Sistema | Clasificación | Criterio mínimo |
+| :--- | :---: | :--- |
+| **Aplicación y logging** | Obligatorio | Iniciar y cerrar correctamente; registrar errores relacionados con recursos, escenas, diálogos y archivos de guardado. |
+| **Render 2D** | Obligatorio | Renderizar sprites con transparencia, orden por capas, cámara 2D y viewport adaptable a las resoluciones admitidas. |
+| **Input** | Obligatorio | Procesar teclado en Linux y controles táctiles básicos en Android mediante una API unificada. |
+| **Gestión de recursos** | Obligatorio | Cargar texturas, retratos, fuentes, música, efectos, escenas y datos narrativos; detectar referencias ausentes. |
+| **Escenas** | Obligatorio | Cargar y cambiar escenas; restaurar la escena activa, el punto de aparición y los cambios persistentes. |
+| **Interacción** | Obligatorio | Detectar una entidad interactuable cercana, mostrar una indicación e iniciar una acción o diálogo al recibir input. |
+| **UI narrativa** | Obligatorio | Mostrar nombre, retrato, texto, avance y opciones de respuesta de forma legible en Linux y Android. |
+| **Diálogos** | Obligatorio | Cargar diálogos desde archivos externos, avanzar por sus nodos y detectar referencias inválidas. |
+| **Decisiones narrativas** | Obligatorio | Presentar al menos dos opciones, registrar la selección y continuar por la rama correspondiente. |
+| **Estado narrativo** | Obligatorio | Leer y modificar variables booleanas, enteras y de texto utilizadas por condiciones, diálogos y eventos. |
+| **Consecuencias narrativas** | Obligatorio | Permitir que una decisión modifique al menos un diálogo posterior, evento, interacción, entidad o cambio de escena. |
+| **Guardado y carga** | Obligatorio | Guardar la escena activa, el punto de aparición y las variables narrativas; restaurar el estado después de reiniciar el juego. |
+| **Física y colisiones 2D** | Obligatorio | Gestionar obstáculos estáticos, collider del jugador, triggers y detección de contactos mediante una biblioteca externa. |
+| **Física dinámica** | Condicional | Permitir que al menos un cuerpo dinámico interactúe con el escenario y el jugador, únicamente si la demostración lo necesita. |
+| **Audio** | Obligatorio | Reproducir música y al menos un efecto de sonido; proporcionar control básico de volumen. |
+| **Animación 2D** | Condicional | Reproducir animaciones básicas mediante sprites para reposo, movimiento o interacción, si la demostración las utiliza. |
+| **Linux** | Obligatorio | Generar un build Release reproducible y ejecutar la demostración narrativa completa. |
+| **Android** | Obligatorio | Generar un build instalable; ejecutar la demostración offline, procesar controles táctiles y restaurar una partida guardada en el dispositivo de prueba. |
+| **Windows** | No bloqueante | Generar un build Release ejecutable; los problemas exclusivos de Windows no impedirán aprobar el MVP principal. |
+| **Editor mínimo** | Obligatorio | Crear o abrir una escena; posicionar entidades; modificar transformaciones; asignar sprites, colliders y diálogos; guardar y validar referencias. |
+| **Empaquetado** | Obligatorio | Validar referencias, generar un manifiesto versionado y copiar o agrupar los recursos necesarios para distribuir la demostración. |
+| **Networking** | Post-MVP | Implementar un único modelo inicial para conectar dos clientes y replicar dos entidades en una escena de prueba independiente. |
+
+### Limites del editor minimo
+
+![alt text](image.png)
 
 ### 3.4 Fuera del MVP
 
