@@ -1,0 +1,24 @@
+El game engine sera usando para un proyecto personal, estara enfocando en el 2d y el multijugador. Ademas, estara disponible para android, linux y windows, usando como api de graficos, vulkan y C++ como lenguaje de programcion y la version 17 como estandar.
+Estara dividido en tres partes: El nucleo, el editor y empaquetador.
+
+
+El nucleo sera como una libreria de juegos (como raylib o smfl), esta  contendra componentes generales como renderizador, gestion de ventanas, input, audio, fisicas y red. Ademas de componentes especificos, como gui (responsive como https://github.com/nicbarker/clay, pero usando el patron builder o el editor para crearla, que macros), administrador de recursos, componentes genericos de fisicas (dinamico y estaticos), animaciones y arbol de dialagos. Este nucleo se usara para escribir la logica de todo los componentes del juego.
+
+El editor sera usado para todo que tiene que ver como diseño, diseño de niveles, diseño de ui, diseñar y probar animaciones, etc. todo que se realize en este editor, sera guardado en varios jsons que el codigo de c++, puede acceder para que coloque cada componente en su lugar. Para que la logica del juego, accedera a los json, mediante el administrador de recursos, que mediante un hash (almacenado en el json) de cada componente para acceder de forma individual, aunque los json, seran converitos a un formato binaria por el emapquetador..
+
+El empaquetador su funcion principal sera almacenar todos los recursos multimedia (imagenes, texturas, audio o objetos 3D) y cifrar en un solo archivo para facilitar su exportacion a otras plataformas. Ademas, de convertir los json del editor a un formato binario. Este compentente sera el ulitmo en entigrarse al resto de la arquitectura del game engine. Otra cosa, este componente, puede estar escrito en otro lenguaje que no sea C++.
+
+Ademas, en el editor y el nucelo debe haber un apartado para sistema de scripts visuales que de una experiencia como scrath o blueprints. Este componente sera usando para un betatester que va probar el codigo. A diferenficia del resto, este componente solo usaran los bettatestes, porque yo el usuario principal, usare C++.
+
+### Decisiones tecnicas
+
+La decision mas importante es la api de graficos, que sera vulkan, ya que el juego que estoy haciendo esta dirigido principalmente a android, y he leido rumores que opengl, es posible que sea declarado como heredado, y por eso, usare vulkan, ademas el tiempo desarrollo que tengo estimando es de 4 a 5 años, por eso mismo, evitare usar cosas que en el futuro, queden sin nuevas actualizaciones. Pero, usare a Vulkan con alguna libreria que me abstraiga toda la logica que se necesita para usar vulkan, ya que vulkan para alguien con poco experiencia en pogramacion de graficos y con multiples intentos de aprender, se le acomplicado, principalmente por lo complicado de depurar errores.
+
+Otra decision importante, es que los componentes generales descriptos, seran en su mayoria abstraciones de librerias externas por ejemplo, para la gestion de ventanas y inputs, usare glfw3. El resto lo mismo, excepto, la parte de red, ya que tengo entendido que en android por permisos y otras cosas, esta capa, si debe tener su interfaz exclusiva. Tomo esta decision para no revintar la rueda y alargar el desarrollo del engine.
+
+Otra decision importante es que el engine debe pesar en release, menos de 1 gb.
+
+## Meta principal
+
+El game engine debe estar listo para el 1 de diciembre. Ya que despues, no tendre menos cantidad de horas para poder trabajar en engine y el juego a al vez.
+
