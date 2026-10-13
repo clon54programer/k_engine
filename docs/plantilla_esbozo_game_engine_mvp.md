@@ -289,12 +289,31 @@ LA **x** significa que nunca se implementaran despues del MVP.
 
 ### 4.2 Reglas de dependencia
 
-* [ ] El juego depende de la API pública del núcleo.
-* [ ] El núcleo no depende del editor ni del empaquetador.
-* [ ] Los tipos de Vulkan no salen del módulo de render.
-* [ ] Las diferencias de plataforma se aíslan detrás de interfaces.
-* [ ] Los formatos de escena y red tienen versión.
-* [ ] Cada módulo declara dependencias permitidas y prohibidas.
+*  El juego depende de la API pública del núcleo.
+*  El núcleo no depende del editor ni del empaquetador.
+*  Los tipos de Vulkan no salen del módulo de render.
+*  Las diferencias de plataforma se aíslan detrás de interfaces.
+* Los formatos de escena y red tienen versión.
+*  Cada módulo declara dependencias permitidas y prohibidas.
+
+### Matriz inicial de dependencias entre módulos
+
+| Módulo | Dependencias permitidas | Dependencias prohibidas |
+| :--- | :--- | :--- |
+| **Core** | Biblioteca estándar de C++ | Platform, Renderer, Input, Resources, Scene, Narrative, SaveSystem, Audio, Physics, Editor, Packer y Networking |
+| **Platform** | Core y APIs específicas del sistema operativo | Renderer, Scene, Narrative, SaveSystem, Editor y Packer |
+| **Renderer** | Core, Platform y Resources | Narrative, SaveSystem, Networking y Editor |
+| **Input** | Core y Platform | Renderer, Scene, Narrative, SaveSystem y Editor |
+| **Resources** | Core, Platform y Serialization | Renderer, Scene, Narrative, Editor y Networking |
+| **Serialization** | Core | Renderer, Input, Scene, Narrative, Editor y APIs específicas de plataforma |
+| **Scene** | Core, Resources, Serialization y componentes compartidos | Editor, Packer y APIs específicas de plataforma |
+| **Narrative** | Core, Resources y Serialization | Renderer, Editor, Vulkan, GLFW y Networking |
+| **SaveSystem** | Core, Scene, Narrative y Serialization | Renderer, Editor, Vulkan, GLFW y Packer |
+| **Audio** | Core, Platform y Resources | Narrative, Scene, Editor y Networking |
+| **Physics** | Core | Narrative, Resources, Editor y APIs específicas de plataforma |
+| **Editor** | Core, Renderer, Input, Resources, Scene, Narrative y Serialization | Detalles internos de Vulkan, Packer y ejecutable final del juego |
+| **Packer** | Core, Serialization, formatos compartidos y validadores | Renderer, Input, Audio, Physics, Narrative y Editor |
+| **Networking** | Core, Platform y Serialization | Renderer, Editor y Narrative |
 
 > **RECOMENDACIÓN:** Evita un EventBus global para toda comunicación. Úsalo solo para eventos claramente definidos; para dependencias esenciales, prefiere interfaces explícitas.
 
