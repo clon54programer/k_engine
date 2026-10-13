@@ -287,14 +287,20 @@ LA **x** significa que nunca se implementaran despues del MVP.
 | **Servidor** | Mantener autoridad de partida | Depender de render o editor |
 | **Juego de prueba** | Validar capacidades del motor | Definir APIs internas del motor |
 
-### 4.2 Reglas de dependencia
+### 4.2 Reglas generales de dependencia
 
-*  El juego depende de la API pública del núcleo.
-*  El núcleo no depende del editor ni del empaquetador.
-*  Los tipos de Vulkan no salen del módulo de render.
-*  Las diferencias de plataforma se aíslan detrás de interfaces.
-* Los formatos de escena y red tienen versión.
-*  Cada módulo declara dependencias permitidas y prohibidas.
+-  El juego depende de la API pública del núcleo.
+- Una dependencia permitida no concede acceso directo a todos los detalles internos del módulo.
+- La comunicación entre módulos deberá realizarse mediante APIs públicas o interfaces limitadas.
+- Ningún módulo podrá introducir una dependencia circular.
+- Los módulos de bajo nivel no dependerán de módulos de nivel superior.
+- Core no dependerá de ningún subsistema del motor.
+- El runtime no dependerá del editor ni del empaquetador.
+- Scene, Narrative y SaveSystem no dependerán directamente de Vulkan, GLFW, Android ni otras implementaciones de plataforma.
+- Los detalles de Vulkan solo podrán aparecer dentro de la implementación del renderizador.
+- Las diferencias entre Linux, Android y Windows deberán permanecer dentro de Platform o de implementaciones específicas.
+- Networking permanecerá aislado de Narrative durante el MVP offline.
+- Toda excepción a esta matriz deberá registrarse como una decisión arquitectónica.
 
 ### Matriz inicial de dependencias entre módulos
 
@@ -336,14 +342,14 @@ LA **x** significa que nunca se implementaran despues del MVP.
 
 | Área | Decisión actual | Alternativas | Justificación | Riesgo |
 | :--- | :--- | :--- | :--- | :--- |
-| **Lenguaje** | C++17 | | | |
-| **Gráficos** | Vulkan mediante abstracción | | | |
-| **Ventana/input** | GLFW | | | |
-| **Física** | Box2D u otra librería | | | |
-| **Audio** | | | | |
-| **Red** | | | | |
-| **Serialización** | JSON editable + binario runtime | | | |
-| **Build** | CMake | | | |
+| **Lenguaje** | C++20 | C o zig| Es el lenguaje que me especializando. Y, estandar es 20 para poder escribir codigo moderan y seguro en memoria.| La gestion de memoria, la dificultad de depurar problemas de memoria, o hilos,  y la complejidad famosa de C++ |
+| **Gráficos** | Vulkan mediante abstracción | OpenGL| La faciliad de integrar en varias plataformas y modernidad.  No use OpenGL porque tengo miedo que lo deprequen y no reciba actualizaciones | LA complejidad de Vulkan al buscar un contral tan explicito del pipeline de renderizado puede ser agobieante o complicado de depurar, si ocurren un error.|
+| **Ventana/input** | GLFW | Ninguna| He trabajado en ella,es facil de integrar y es usando en la industria | Que dejen de mantenerla y que no esta disponible para android. |
+| **Física** | Box2D u otra librería | Ninguna| Facilitad de integracion y por se reconocida en el entorno | Que la dejen de mantener y tener que creer una capa extra para que el codigo C de la libreria no se mezcle mucho con el mio.|
+| **Audio** | MiniAudio| OpenAl soft| Es facil de integrar | La pueden dejar de mantenr y tengo que crear una capa intermedia al estar escrita en C |
+| **Red** | ni idea |ni idea |ni idea |ni idea |
+| **Serialización** | JSON editable (json nhlonmm) + binario runtime (protobuf o la biblioteca de google) | | | |
+| **Build** | CMake | uno propio| | |
 | **Editor UI** | | | | |
 | **Empaquetador** | C++ u otro lenguaje | | | |
 
