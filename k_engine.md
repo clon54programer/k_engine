@@ -17,7 +17,7 @@ macros invasivas, pseudo-estandares de C++ para el engine y configuracion de
 compilacion dificiles de crear y depurar.
 
 **Usuario principal:**  
-Yo, un usuario intermedio de C++ y estuxiasta de la programacion
+Yo, un usuario intermedio de C++ y estusiasta de la programacion
 , con 3 años escribiendo a diario C++.
 
 ---
@@ -29,14 +29,14 @@ Quiero que permita realizar juegos comerciales o para mi, usando C++ como
 lenguaje principal.
 
 ### Objetivo del primer MVP
-Para el editor, Abrir una ventana con GLFW3, inicializar el pipeline básico de Vulkan para renderizar un sprite/textura 2D en pantalla desde un contenedor binario personalizado, y permitir cerrar la aplicación de forma limpia. Y, para el editor, Crear una herramienta GUI accesible  que permita colocar baldosas (tiles) en una cuadrícula 2D, definir una secuencia de fotogramas (spritesheet) para una animación básica, y exportar/guardar todo en el formato JSON que el motor C++ pueda cargar e interpretar. Desarrollar una CLI en Python que tome los archivos fuente del editor (niveles JSON y recursos multimedia raw como imágenes PNG y audios WAV), los valide, aplique compresión/estructuración básica y los empaquete en un único archivo binario contenedor (ej. .kbin / .pak) con una cabecera (header) e índice de recursos que el motor en C++ pueda leer de forma eficiente.
+Para el nucleo, Abrir una ventana con GLFW3, inicializar el pipeline básico de Vulkan para renderizar un sprite/textura 2D en pantalla desde un contenedor binario personalizado, y permitir cerrar la aplicación de forma limpia. Y, para el editor, Crear una herramienta GUI accesible  que permita colocar baldosas (tiles) en una cuadrícula 2D, definir una secuencia de fotogramas (spritesheet) para una animación básica, y exportar/guardar todo en el formato JSON que el motor C++ pueda cargar e interpretar. Desarrollar una CLI en Python que tome los archivos fuente del editor (niveles JSON y recursos multimedia raw como imágenes PNG y audios WAV), los valide, aplique compresión/estructuración básica y los empaquete en un único archivo binario contenedor (ej. .kbin / .pak) con una cabecera (header) e índice de recursos que el motor en C++ pueda leer de forma eficiente.
 
 ### Cómo sabré que el MVP está terminado
 
 #### Nucleo
 - [ ] Pila de validación limpia: La aplicación ejecuta, renderiza y se cierra sin arrojar advertencias ni errores en las Vulkan Validation Layers.
 
-- [ ] Gestión de memoria estable: Cero fugas de memoria (memory leaks) ni colgados al cerrar el motor, validado mediante la gestión determinista de recursos (RAII).
+- [ ] Criterio de memoria y cierre: El engine debe liberar los recursos propiedad de la aplicación al cerrar. Se validará mediante pruebas repetidas de apertura, carga, renderizado y cierre, análisis de memoria y capas de validación de Vulkan en la configuración de desarrollo. Android deberá poder pausar y reanudar el renderizado cuando cambie la disponibilidad de la superficie.
 
 - [ ] Renderizado funcional: Se muestra correctamente en pantalla la entidad, sprite o textura objetivo desde el contenedor binario del motor.
 
@@ -57,7 +57,7 @@ Para el editor, Abrir una ventana con GLFW3, inicializar el pipeline básico de 
 
 #### Empaquetador
 
-- [ ] Cabecera e Índice (Header & Table of Contents): El archivo generado incluye una firma mágica (ej. KBIN), versión del formato, número de recursos y una tabla de desplazamiento (offsets y tamaños en bytes) para cada archivo empaquetado.
+- [ ] Contenedor de recursos: La versión 1 incluirá una cabecera versionada, un índice de recursos y los datos de cada recurso. El índice permitirá localizar y validar las entradas. La política de compresión y el formato de los niveles se definirán explícitamente; el hecho de usar un contenedor binario no implica que todos sus contenidos deban convertirse a binario.
 
 - [ ] Conversión de Niveles: Convierte la estructura lógica del editor (JSON) a un formato binario compacto (evitando procesar cadenas de texto en C++ en tiempo de ejecución).
 
@@ -72,12 +72,12 @@ Para el editor, Abrir una ventana con GLFW3, inicializar el pipeline básico de 
 ## 3. Alcance del MVP
 
 ### Debe incluir
-- [ ] Compilar para linux y Android (Version 15)
+- [ ] Compilar para linux y Android (Version 15 para arm)
 - [ ] [Función o capacidad necesaria]
 - [ ] [Función o capacidad necesaria]
 
 ### No incluirá en esta primera versión
-- [ ] [Función futura]
+- [ ]  
 - [ ] 3D
 - [ ] Compilar para windows y webassmbly
 
