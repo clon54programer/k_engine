@@ -17,7 +17,8 @@ macros invasivas, pseudo-estandares de C++ para el engine y configuracion de
 compilacion dificiles de crear y depurar.
 
 **Usuario principal:**  
-Yo, un usuario intermedio de C++ y estuxiasta de la programacion, con 3 años escribiendo a diario C++.
+Yo, un usuario intermedio de C++ y estuxiasta de la programacion
+, con 3 años escribiendo a diario C++.
 
 ---
 
