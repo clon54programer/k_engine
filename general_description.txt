@@ -57,6 +57,18 @@ Red, principalmente por seguridad y poder sacar el mayor rendimiento posible.
 El empaquetador sera escrito en python, porque es un lenguaje que conozco y puedo 
 depurar. Opciones mas rapida en rendimiento, como Go o Rust, no la usare, el primero 
 porque no lo conozco y rust por razones personales y por los binarios pesados en desarrollo.
+Tambien pense en Zig, que lo he usado, pero que en cada actualizacion cambian muchas cosas 
+y que no lo use mucho, lo descarto.
+
+## Descripcion del juego
+En la primera parte, mencione el uso y aqui los describire. Tengo dos juegos
+habientados en un mundo ficitio, uno en planeacion y uno en TODO. El primero y el
+cual se centrara este primer MVP, sin dejar de ser reutilizable para futuros proyectos,
+es un juego de plataformas con accion, al estilo de Contra, pero mas moderno y fanstastico,
+ademas, se centrara en la narrativa, ya que su historia se contara en el formato de novela visual,
+es decir, el juego sera en su mayoria offline. Los componentes de red seran un extra para 
+personas que quieran retarse entre si en una misma red local, no obstante, si tiene exito suficiente
+tengo planeado contractar servidores para que esta caracteristica tenga mas importancia.
 
 ## Meta principal
 
