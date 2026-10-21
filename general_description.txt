@@ -1,6 +1,6 @@
-El game engine sera usando para un proyecto personal, estara enfocando en el 2d,
+El game engine sera usando para  proyectos personals, estara enfocando en el 2d,
 con caracteristicas de multijugador.
-Ademas, estara disponible para android, linux y windows, 
+Ademas, estara disponible para webassembly, android, linux y windows, 
 usando como api de graficos, vulkan y C++ como lenguaje de programcion
 y la version 17 como estandar.
 Estara dividido en tres partes: El nucleo, el editor y empaquetador.
@@ -18,24 +18,22 @@ administrador de recursos, componentes genericos de fisicas
 Este nucleo se usara para escribir la logica de todo los componentes del juego.
 
 El editor sera usado para todo que tiene que ver como diseño,
-diseño de niveles, diseño de ui, diseñar y probar animaciones, etc. 
-todo que se realize en este editor, sera guardado en varios jsons que el codigo de c++,
-puede acceder para que coloque cada componente en su lugar. Para que la logica del juego,
+diseño de niveles, diseño de ui, diseñar y prueba de animaciones, etc. 
+todo que se realize en este editor, sera guardado en varios jsons (en desarrollo)
+que el codigo de c++, puede acceder para que coloque cada componente en su lugar.
+Para que la logica del juego,
 accedera a los json, mediante el administrador de recursos,
-que mediante un hash (almacenado en el json) de cada componente para acceder de forma individual,
-aunque los json, seran converitos a un formato binaria por el emapquetador.
+que mediante un hash (almacenado en el json) de cada componente para identificar y
+ acceder de forma individual,
+aunque los json, seran convertidos a un formato binario por el empaquetador.
 
 El empaquetador su funcion principal sera almacenar todos los recursos multimedia
 (imagenes, texturas, audio o objetos 3D)
 y cifrar en un solo archivo para facilitar su exportacion a otras plataformas.
 Ademas, de convertir los json del editor a un formato binario.
-Este compentente sera el ulitmo en entigrarse al resto de la arquitectura del game engine.
+Este compenente sera el ulitmo en entigrarse al resto de la arquitectura del game engine.
 Otra cosa, este componente, puede estar escrito en otro lenguaje que no sea C++.
 
-Ademas, en el editor y el nucelo debe haber un apartado para sistema de scripts visuales
-que de una experiencia como scrath o blueprints. Este componente sera usando para un b
-betatester que va probar el codigo. A diferenficia del resto, 
-este componente solo usaran los bettatestes, porque yo el usuario principal, usare C++.
 
 ### Decisiones tecnicas
 
@@ -55,6 +53,10 @@ seran en su mayoria abstraciones de librerias externas por ejemplo,
 para la gestion de ventanas y inputs, usare glfw3.
 Lo anterior tiene una excepcion, que son las interfaces para los componentes de
 Red, principalmente por seguridad y poder sacar el mayor rendimiento posible.
+
+El empaquetador sera escrito en python, porque es un lenguaje que conozco y puedo 
+depurar. Opciones mas rapida en rendimiento, como Go o Rust, no la usare, el primero 
+porque no lo conozco y rust por razones personales y por los binarios pesados en desarrollo.
 
 ## Meta principal
 
