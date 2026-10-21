@@ -162,18 +162,20 @@ Anota qué debe poder hacer el engine. Marca cada punto como **necesario**, **de
 
 | Capacidad | Prioridad | Descripción o ejemplo |
 |---|---|---|
-| Renderizado 2D | [ ] | [ ] |
-| Ventanas y pantalla completa | [ ] | [ ] |
-| Entrada | [ ] | [Teclado, táctil, mando…] |
-| Audio | [ ] | [ ] |
-| Física y colisiones | [ ] | [ ] |
-| Animaciones | [ ] | [ ] |
-| Interfaz de usuario | [ ] | [ ] |
-| Carga de recursos | [ ] | [ ] |
-| Escenas o niveles | [ ] | [ ] |
-| Guardado de datos | [ ] | [ ] |
-| Red | [ ] | [Si aplica al MVP] |
-| Otras | [ ] | [ ] |
+| Renderizado 2D | Necesario | Renderizar sprites y texturas con Vulkan desde los recursos empaquetados. En Android, exigir Vulkan 1.1 o superior; verificar también los requisitos de GPU y driver en Linux. Permitir ordenar los personajes según su posición en los carriles de profundidad. |
+| Ventanas y superficies | Necesario | Crear la ventana o superficie de renderizado en Linux y Android. Gestionar redimensionamiento, recreación de la superficie y ciclo de pausa/reanudación en Android. |
+| Entrada | Necesario | Ofrecer acciones independientes del dispositivo. Para el MVP, admitir teclado y ratón en Linux y pantalla táctil en Android. El mando puede añadirse después. |
+| Física y colisiones | Necesario | Incluir movimiento 2D básico, límites de colisión y detección de impactos necesaria para probar un personaje, un enemigo y un ataque. No se requiere un sistema general de cuerpos rígidos para el MVP. |
+| Animaciones | Necesario | Cargar una spritesheet, definir secuencias de fotogramas y reproducirlas a una velocidad determinada. |
+| Interfaz de usuario | Necesario | Proporcionar la GUI del editor para seleccionar tiles, colocarlos en la cuadrícula, editar capas y crear o previsualizar animaciones. Más adelante, permitir menús del juego, incluido el inventario sin pausar la simulación. |
+| Carga de recursos | Necesario | Leer y validar recursos desde un contenedor versionado, incluyendo imágenes y datos de niveles. Informar errores descriptivos si faltan recursos o el contenedor no es compatible. |
+| Escenas o niveles | Necesario | Cargar un nivel 2D con tiles, capas, objetos y carriles de profundidad. El nivel debe poder representar dónde existen carriles y dónde se permite cambiar entre ellos; las reglas de combate y sigilo pertenecen al juego. |
+| Guardado de datos | Necesario | Guardar y cargar los proyectos editables del editor. El guardado de progreso, decisiones narrativas y recursos de campaña queda para una fase posterior. |
+| Red | Futuro | El multijugador competitivo 1 vs. 1 y 3 vs. 3 por red local no forma parte del MVP del engine. |
+| Audio | Deseable | Reproducir efectos de sonido y música, con control básico de volumen y pausa/reanudación en Android. No es necesario para validar el primer flujo de renderizado y empaquetado. |
+| Editor de niveles y animaciones | Necesario | Permitir crear un nivel en cuadrícula, seleccionar y colocar tiles, editar capas y crear una animación básica. Guardar el proyecto y exportar sus datos. |
+| Empaquetador | Necesario | Incluir una CLI en Python que valide los recursos y niveles, detecte referencias ausentes y genere un contenedor que el runtime C++ pueda leer. |
+| Otras | Deseable | Facilitar mensajes de diagnóstico útiles para errores de carga, inicialización de Vulkan y recursos incompatibles. |
 
 ---
 
