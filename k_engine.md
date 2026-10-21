@@ -110,17 +110,18 @@ se limita a las funciones 2D necesarias para validar el flujo completo del engin
 
 ### Android
 - **Versión mínima:** Android 15 (API 35).
-- **Versión minima para PlayStore:** Android 16 (API 36).
+- **SDK objetivo para Google Play:** `targetSdkVersion` 36 o superior para nuevas apps y actualizaciones, según la política vigente.
+- **SDK de compilación:** `compileSdkVersion` 36 o superior.
 - **Arquitectura objetivo:** arm64-v8a.
-- **Dispositivo de prueba:** Teléfono del desarrollador con Android 16 y arquitectura arm64-v8a; Mto G34 5G
+- **Dispositivo de prueba:** Moto G34 5G con Android 16 y arquitectura arm64-v8a; 
 - **Forma de instalación para el MVP:** APK instalable manualmente en el dispositivo de prueba.
 - **Orientación de pantalla:** Horizontal, recomendada para el juego de plataformas;
 - **Métodos de entrada:** Pantalla táctil.
-- **Requisito gráfico en Android:** Vulkan 1.1 o superior, probado en un Motorola Moto G34 5G con Android 16 y GPU Adreno 619.
+- **Requisito gráfico en Android:** Vulkan 1.1 o superior. Verificar las capacidades expuestas por el driver en el Moto G34 5G.
+
 
 ### Plataformas futuras
-Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de validar el engine en Linux Mint y Android. También se podrá ampliar la compatibilidad a otras distribuciones de Linux y dispositivos Android.
-La versión de Android y la arquitectura no garantizan por sí solas que el teléfono tenga las capacidades Vulkan necesarias; conviene verificarlo en el dispositivo antes de fijar ese requisito como definitivo.
+Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de validar el engine en Linux Mint y Android. También se podrá ampliar la compatibilidad a otras distribuciones de Linux y dispositivos Android. Ademas, evaluará ampliar la compatibilidad de Android hasta Android 10 (API 29), manteniendo Vulkan 1.1 como requisito gráfico. Este cambio solo se considerará después de probar el engine en dispositivos reales con distintas GPU y drivers; si no se pueden realizar esas pruebas, no se declarará compatibilidad con Android 10
 ---
 
 ## 5. El juego que utilizará el engine
