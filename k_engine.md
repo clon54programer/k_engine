@@ -25,15 +25,47 @@ Yo, un usuario intermedio de C++ y estuxiasta de la programacion
 ## 2. Objetivos del proyecto
 
 ### Objetivo a largo plazo
-[¿Qué quiero que el proyecto pueda hacer en el futuro?]
+Quiero que permita realizar juegos comerciales o para mi, usando C++ como
+lenguaje principal.
 
 ### Objetivo del primer MVP
-[¿Qué resultado mínimo útil quiero alcanzar primero?]
+Para el editor, Abrir una ventana con GLFW3, inicializar el pipeline básico de Vulkan para renderizar un sprite/textura 2D en pantalla desde un contenedor binario personalizado, y permitir cerrar la aplicación de forma limpia. Y, para el editor, Crear una herramienta GUI accesible  que permita colocar baldosas (tiles) en una cuadrícula 2D, definir una secuencia de fotogramas (spritesheet) para una animación básica, y exportar/guardar todo en el formato binario o JSON que el motor C++ pueda cargar e interpretar. Desarrollar una CLI en Python que tome los archivos fuente del editor (niveles JSON y recursos multimedia raw como imágenes PNG y audios WAV), los valide, aplique compresión/estructuración básica y los empaquete en un único archivo binario contenedor (ej. .kbin / .pak) con una cabecera (header) e índice de recursos que el motor en C++ pueda leer de forma eficiente.
 
 ### Cómo sabré que el MVP está terminado
-- [ ] [Criterio observable 1]
-- [ ] [Criterio observable 2]
-- [ ] [Criterio observable 3]
+
+#### Nucleo
+- [ ] Pila de validación limpia: La aplicación ejecuta, renderiza y se cierra sin arrojar advertencias ni errores en las Vulkan Validation Layers.
+
+- [ ] Gestión de memoria estable: Cero fugas de memoria (memory leaks) ni colgados al cerrar el motor, validado mediante la gestión determinista de recursos (RAII).
+
+- [ ] Renderizado funcional: Se muestra correctamente en pantalla la entidad, sprite o textura objetivo desde el contenedor binario del motor.
+
+- [ ] Bucle principal funcional: El game loop corre a una tasa de fotogramas estable y responde al menos a una entrada básica del usuario (ej. mover un sprite o cerrar con la tecla ESC).
+
+#### Editor
+- [ ] Grid y Colocación: Se puede seleccionar una baldosa de un tileset y colocarla/borrarla en una cuadrícula (grid) de dimensiones configurables (ej. 16 x 16  o 32 x 32).
+
+- [ ] Capas básicas: Permite manejar al menos 2 capas simples (ej. capa de fondo y capa de colisión/paredes).
+
+- [ ] Creación de Clips: Se pueden seleccionar los fotogramas (frames) de un spritesheet, definir la velocidad de reproducción (ej. FPS o tiempo por cuadro) y reproducir una vista previa (preview) en bucle.
+
+- [ ] Marcadores/Metadata: Permite asignar un nombre a la animación (ej. idle, walk_right) e identificar el origen del pivote/hitbox.
+
+- [ ] Persistencia de datos: El editor permite guardar y cargar el estado del proyecto para continuar editando.
+
+- [ ] Exportación para el Motor: Exporta el nivel y los datos de animación a un formato estructurado json que el motor C++ lee sin errores de parseo.
+
+#### Empaquetador
+
+- [ ] Cabecera e Índice (Header & Table of Contents): El archivo generado incluye una firma mágica (ej. KBIN), versión del formato, número de recursos y una tabla de desplazamiento (offsets y tamaños en bytes) para cada archivo empaquetado.
+
+- [ ] Conversión de Niveles: Convierte la estructura lógica del editor (JSON o YAML) a un formato binario compacto (evitando procesar cadenas de texto en C++ en tiempo de ejecución).
+
+- [ ] Inclusión Multimedia: Empaqueta imágenes (PNG/JPG) y otros assets (audio, fuentes, etc.) sin corromper sus bytes ni modificar su alineación necesaria para la carga.
+
+- [ ] Ruta de entrada y salida: Acepta argumentos por línea de comandos para especificar el directorio de assets/proyecto del editor y la ruta del archivo .pak resultante.
+
+- [ ] Validación de integridad: Si falta un recurso referenciado en el nivel o un archivo está corrupto, la herramienta lanza un error descriptivo en la terminal antes de empaquetar.
 
 ---
 
