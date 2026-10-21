@@ -72,17 +72,19 @@ Para el editor, Abrir una ventana con GLFW3, inicializar el pipeline básico de 
 ## 3. Alcance del MVP
 
 ### Debe incluir
-- [ ] [Función o capacidad necesaria]
+- [ ] Compilar para linux y Android (Version 15)
 - [ ] [Función o capacidad necesaria]
 - [ ] [Función o capacidad necesaria]
 
 ### No incluirá en esta primera versión
 - [ ] [Función futura]
-- [ ] [Función futura]
-- [ ] [Plataforma o característica fuera del MVP]
+- [ ] 3D
+- [ ] Compilar para windows y webassmbly
 
 ### Motivo de estas prioridades
-[¿Por qué estas funciones son más importantes que las excluidas?]
+La de las plataformas, porque no tengo acceso a un computador con windows y
+webAssmbly, por el tema que debo usar otra api diferente a Vulkan. Y, 
+el 3D porque no tengo los conocimientos artisticos para crear algo en 3D.
 
 ---
 
