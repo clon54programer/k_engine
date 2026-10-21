@@ -1,5 +1,6 @@
-El game engine sera usando para un proyecto personal, estara enfocando en el 2d y
-el multijugador. Ademas, estara disponible para android, linux y windows, 
+El game engine sera usando para un proyecto personal, estara enfocando en el 2d,
+con caracteristicas de multijugador.
+Ademas, estara disponible para android, linux y windows, 
 usando como api de graficos, vulkan y C++ como lenguaje de programcion
 y la version 17 como estandar.
 Estara dividido en tres partes: El nucleo, el editor y empaquetador.
@@ -11,10 +12,10 @@ gestion de ventanas, input, audio, fisicas y red.
 Ademas de componentes especificos, 
 como gui 
 (responsive como https://github.com/nicbarker/clay,
- pero usando el patron builder o el editor para crearla, que macros),
+pero usando el patron builder o el editor para crearla, que macros),
 administrador de recursos, componentes genericos de fisicas
- (dinamico y estaticos), animaciones y arbol de dialagos.
-  Este nucleo se usara para escribir la logica de todo los componentes del juego.
+(dinamico y estaticos), animaciones y arbol de dialagos.
+Este nucleo se usara para escribir la logica de todo los componentes del juego.
 
 El editor sera usado para todo que tiene que ver como diseño,
 diseño de niveles, diseño de ui, diseñar y probar animaciones, etc. 
@@ -42,7 +43,7 @@ La decision mas importante es la api de graficos, que sera vulkan,
 ya que el juego que estoy haciendo esta dirigido principalmente a android,
 y he leido rumores que opengl, es posible que sea declarado como heredado,
 y por eso, usare vulkan, ademas el tiempo desarrollo que tengo estimando
-es de 4 a 5 años, por eso mismo, evitare usar cosas que en el futuro,
+es de 4 a 5 años[^1], por eso mismo, evitare usar cosas que en el futuro,
 queden sin nuevas actualizaciones. Pero, usare a Vulkan con alguna libreria
 que me abstraiga toda la logica que se necesita para usar vulkan,
 ya que vulkan para alguien con poco experiencia en pogramacion de graficos
@@ -64,3 +65,7 @@ Otra decision importante es que el engine debe pesar en release, menos de 1 gb.
 El game engine debe estar listo para el 1 de diciembre. Ya que despues,
 no tendre menos cantidad de horas para poder trabajar en engine y el juego a al vez.
 
+
+[^1]: Este tiempo estimando fue calculando antes de aprender a usar agentes IA,
+pero aun es un proyecto de largo plazo, porque para crear un lore coherente y interantes,
+ademas del arte de los juegos de mi parte.
