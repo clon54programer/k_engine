@@ -196,8 +196,6 @@ Sí. Se usará para crear y guardar niveles, animaciones básicas e interfaces d
 - Generador de código C++ para convertir los layouts de interfaz del editor en código que use la API Builder.
 - CLI en Python para validar y empaquetar niveles y recursos.
 - Validación de referencias a recursos y errores descriptivos antes de generar código o paquetes.
-- Capas de validación de Vulkan y registros de errores para depurar el runtime durante el desarrollo.
-
 ---
 
 ## 8. Datos y recursos
