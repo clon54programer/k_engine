@@ -130,9 +130,10 @@ Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de va
 plataformas de acción 2d y hack and slash
 
 **Descripción breve:**  
-El jugador elige 3 personajes, pero solo aparece y controla en su vista. Cada personaje
+El jugador elige 3 personajes y cambia de personaje durante el nivel. Cada personaje
 puede usar hechizos comunes, hechizos especificos por naturaleza o faccion, hechizos personales,
-armas de fuego y armas blancas. En cada nivel el jugador va por un objetivo (robar o alcanzar un objecto, o eliminar a alguien), normalmente se lucha de forma lineal (con profundidad) hasta llegar a ese objetivo, y en niveles muy especificos son sigilos.
+armas de fuego y armas blancas, antes de cada nivel, puede elegir 3 tipos de armas y 12 hechizos de cualquier tipo o clasificacion, pero en un nivel, solo puede elegir dos tipos de amras y 4 hechizos, el resto se va al inventario, que puedem reemplazar a un hechizo o arma durante el nivel, al menos que el nivel exiga un arma o hechizo para su realizacion. En cada nivel el jugador va por un objetivo (robar o alcanzar un objecto, o eliminar a alguien), normalmente se lucha de forma lineal (con profundidad, es decir, puede haber carriles en el eje de profundidad) hasta llegar a ese objetivo, y en niveles muy especificos son sigilos, en donde
+ser descubierto falla el nivel de forma automatica o pasado x segundos del ser decubierto.
 
 **Características centrales del juego:**
 - [ ]
@@ -140,7 +141,7 @@ armas de fuego y armas blancas. En cada nivel el jugador va por un objetivo (rob
 - [ ]
 
 **Modo de juego:**  
-Individual offline y multijugador local 1 vs 1 o 3 vs 3.
+Individual offline y multijugador local 1 vs 1 o 3 vs 3 en una red local.
 
 **¿Qué parte del juego se desarrollará para validar el MVP del engine?**  
 [Por ejemplo: una pantalla, un nivel corto o una sección jugable.]
