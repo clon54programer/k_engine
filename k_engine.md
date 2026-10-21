@@ -3,16 +3,21 @@
 ## 1. Resumen
 
 **Nombre del proyecto:**  
-[Nombre provisional]
+K_engine
 
 **¿Qué estoy creando?**  
-[Descríbelo en 2–4 frases.]
+Un engine para mis proyectos personales que tengo 
+en planeacion o pensando a desarrollar en un futuro.
 
 **¿Qué problema, necesidad o meta resuelve?**  
-[Explica por qué quiero hacerlo.]
+Tener un Game engine que sea un balance entre control de bajo nivel 
+con la facilidad de diseñar y probar niveles y animaciones.
+Ademas, Quiero orientar el desarrollo en el lenguaje de C++, pero evitando
+macros invasivas, pseudo-estandares de C++ para el engine y configuracion de
+compilacion dificiles de crear y depurar.
 
 **Usuario principal:**  
-[Quién usará el engine o jugará el juego.]
+Yo, un usuario intermedio de C++ y estuxiasta de la programacion, con 3 años escribiendo a diario C++.
 
 ---
 
