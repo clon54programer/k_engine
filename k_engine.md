@@ -110,11 +110,13 @@ se limita a las funciones 2D necesarias para validar el flujo completo del engin
 
 ### Android
 - **Versión mínima:** Android 15 (API 35).
+- **Versión minima para PlayStore:** Android 16 (API 36).
 - **Arquitectura objetivo:** arm64-v8a.
-- **Dispositivo de prueba:** Teléfono del desarrollador con Android 15 y arquitectura arm64-v8a; Mto G34 5G
+- **Dispositivo de prueba:** Teléfono del desarrollador con Android 16 y arquitectura arm64-v8a; Mto G34 5G
 - **Forma de instalación para el MVP:** APK instalable manualmente en el dispositivo de prueba.
 - **Orientación de pantalla:** Horizontal, recomendada para el juego de plataformas;
 - **Métodos de entrada:** Pantalla táctil.
+- **Requisito gráfico en Android:** Vulkan 1.1 o superior, probado en un Motorola Moto G34 5G con Android 16 y GPU Adreno 619.
 
 ### Plataformas futuras
 Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de validar el engine en Linux Mint y Android. También se podrá ampliar la compatibilidad a otras distribuciones de Linux y dispositivos Android.
