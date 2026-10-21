@@ -59,7 +59,7 @@ Para el editor, Abrir una ventana con GLFW3, inicializar el pipeline básico de 
 
 - [ ] Cabecera e Índice (Header & Table of Contents): El archivo generado incluye una firma mágica (ej. KBIN), versión del formato, número de recursos y una tabla de desplazamiento (offsets y tamaños en bytes) para cada archivo empaquetado.
 
-- [ ] Conversión de Niveles: Convierte la estructura lógica del editor (JSON o YAML) a un formato binario compacto (evitando procesar cadenas de texto en C++ en tiempo de ejecución).
+- [ ] Conversión de Niveles: Convierte la estructura lógica del editor (JSON) a un formato binario compacto (evitando procesar cadenas de texto en C++ en tiempo de ejecución).
 
 - [ ] Inclusión Multimedia: Empaqueta imágenes (PNG/JPG) y otros assets (audio, fuentes, etc.) sin corromper sus bytes ni modificar su alineación necesaria para la carga.
 
