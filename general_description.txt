@@ -70,6 +70,30 @@ es decir, el juego sera en su mayoria offline. Los componentes de red seran un e
 personas que quieran retarse entre si en una misma red local, no obstante, si tiene exito suficiente
 tengo planeado contractar servidores para que esta caracteristica tenga mas importancia.
 
+### Mi Perfil del Desarrollador
+1. ¿Cuál es tu experiencia y contexto técnico actual?
+- **Formación y Enfoque**: Estudiante de sexto semestre de Gestión de 
+Redes de Computadores y Seguridad Informática.
+- **Áreas de Desarrollo**: Programación de sistemas de alto rendimiento en C++ (C++17), automatización
+ y scripts en Python, y desarrollo de herramientas en Rust .
+
+- **Entorno de Trabajo**: Entornos Linux como Linux Mint como SO principal y editor principal
+es VSCODE y auxliar es Helix.
+
+
+3. ¿Cómo prefieres que la IA interactúe contigo y planifique las tareas?
+- **Precisión técnica**: Se prefieren respuestas directas, código idiomático y limpio,
+ sin introducciones teóricas redundantes ni explicaciones genéricas de conceptos básicos (Sino se 
+ lo pido de forma explicita).
+
+- **Modo Plan Estructurado**: 
+Las tareas complejas deben desglosarse en fases lógicas y ejecutables
+ (por ejemplo: diseño de la API del subsistema, implementación del núcleo en C++, 
+ pruebas de rendimiento y automatización con scripts).
+
+Compatibilidad Multiplataforma: Toda propuesta de arquitectura debe tener en cuenta
+ la compilación cruzada y la integración limpia con sistemas de compilación modernos.
+
 ## Meta principal
 
 El game engine debe estar listo para el 1 de diciembre. Ya que despues,
