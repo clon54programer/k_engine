@@ -130,16 +130,21 @@ Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de va
 plataformas de acción 2d y hack and slash
 
 **Descripción breve:**  
-El jugador elige 3 personajes y cambia de personaje durante el nivel. Cada personaje
+Un juego de plataformas de acción 2D con combate hack and slash. El jugador elige 3 personajes y cambia de personaje durante el nivel. Cada personaje
 puede usar hechizos comunes, hechizos especificos por naturaleza o faccion, hechizos personales,
-armas de fuego y armas blancas, antes de cada nivel, puede elegir 3 tipos de armas y 12 hechizos de cualquier tipo o clasificacion, pero en un nivel, solo puede elegir dos tipos de amras y 4 hechizos, el resto se va al inventario, que puedem reemplazar a un hechizo o arma durante el nivel, al menos que el nivel exiga un arma o hechizo para su realizacion. En cada nivel el jugador va por un objetivo (robar o alcanzar un objecto, o eliminar a alguien), normalmente se lucha de forma lineal (con profundidad, es decir, puede haber carriles en el eje de profundidad) hasta llegar a ese objetivo, y en niveles muy especificos son sigilos, en donde
-ser descubierto falla el nivel de forma automatica o pasado x segundos del ser decubierto.
+armas de fuego y armas blancas, antes de cada nivel, puede elegir 3 tipos de armas y 12 hechizos de cualquier tipo o clasificacion, pero en un nivel, solo puede elegir dos tipos de amras y 4 hechizos, el resto se va al inventario, que sera un menu que no pausa el nivel, que puedem reemplazar a un hechizo o arma durante el nivel, al menos que el nivel exiga un arma o hechizo para su realizacion. 
+
+En cada nivel el jugador va por un objetivo (robar o alcanzar un objecto, o eliminar a alguien), normalmente se lucha de forma lineal (con profundidad, es decir, puede haber carriles en el eje de profundidad) hasta llegar a ese objetivo, y en niveles muy especificos son sigilos, en donde
+si un npc de baja rango (dependiendo de la faccion) te visualiza y logra alertar al resto falla, pero si es de alto rango, falla de forma automatica. no se puede especificar un tiempo, ya que dependera del entorno (abirto o cerrado) y la forma de comunicacion sea a voz o con un sistema de comunicaciones.
+
 La narrativa sera importante de forma indirecta al gameplay, ya que segun las interaciones o decisiones que tengas antes de cada nivel, podras tener mas o menos recursos, o bajar o aumentar la dificultad al interactuar con el que no debias, o haber tratado mal en una ocasion anterior.
 
 **Características centrales del juego:**
-- [ ]
-- [ ]
-- [ ]
+- El jugador controla un equipo de tres personajes y puede cambiar entre ellos durante el nivel. Los personajes pueden usar hechizos comunes, hechizos asociados a su naturaleza o facción, y hechizos personales.
+- Antes de cada nivel, el jugador prepara hasta tres tipos de armas y doce hechizos. Durante el nivel puede seleccionar hasta dos tipos de armas y cuatro hechizos; el resto queda en el inventario y puede sustituirse desde un menú sin pausar el juego.
+- Los niveles combinan plataformas de acción 2D y combate hack and slash. Algunos incluyen carriles de profundidad que afectan el movimiento y los combates, pero que no están conectados de forma continua por todo el nivel.
+- Algunos niveles incluyen sigilo. Si un NPC de rango bajo detecta al jugador y consigue alertar a los demás, el nivel falla. Si lo detecta un NPC de rango alto, el nivel falla automáticamente. El tiempo para transmitir una alerta depende del entorno y del medio de comunicación, como la voz o un sistema de comunicaciones.
+- Las decisiones e interacciones narrativas anteriores a un nivel pueden afectar los recursos disponibles o la dificultad de niveles posteriores
 
 **Modo de juego:**  
 Individual offline y multijugador competitivo mediante una red local, con modos 1 vs. 1 y 3 vs. 3. En el multijugador cada jugador elegi un personaje disponible del modo offline.
