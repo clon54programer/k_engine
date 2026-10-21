@@ -53,12 +53,8 @@ lo complicado de depurar errores.
 Otra decision importante, es que los componentes generales descriptos,
 seran en su mayoria abstraciones de librerias externas por ejemplo,
 para la gestion de ventanas y inputs, usare glfw3.
-El resto lo mismo, excepto, la parte de red,
-ya que tengo entendido que en android por permisos y otras cosas,
-esta capa, si debe tener su interfaz exclusiva.
-Tomo esta decision para no revintar la rueda y alargar el desarrollo del engine.
-
-Otra decision importante es que el engine debe pesar en release, menos de 1 gb.
+Lo anterior tiene una excepcion, que son las interfaces para los componentes de
+Red, principalmente por seguridad y poder sacar el mayor rendimiento posible.
 
 ## Meta principal
 
