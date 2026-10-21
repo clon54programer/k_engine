@@ -182,20 +182,21 @@ Anota qué debe poder hacer el engine. Marca cada punto como **necesario**, **de
 ## 7. Editor y herramientas
 
 **¿El MVP necesita un editor visual?**  
-[No / Sí / Solo herramientas básicas]
+Sí. Se usará para crear y guardar niveles, animaciones básicas e interfaces de usuario.
 
 **¿Qué se podrá crear o modificar con el editor?**
-- [ ] Niveles
-- [ ] Interfaz
-- [ ] Animaciones
-- [ ] Diálogos
-- [ ] Otros: [ ]
+- [x] Niveles: tilemaps en cuadrícula, capas básicas y datos necesarios para representar los carriles de profundidad.
+- [x] Interfaz de usuario: diseñar interfaces responsive para el juego. El editor guardará los layouts en un formato editable; una herramienta de generación los convertirá a código C++ que construye la interfaz mediante la API Builder del engine. La lógica y los eventos del juego se implementarán en C++.
+- [x] Animaciones: clips básicos creados a partir de fotogramas de una spritesheet.
+- [ ] Diálogos: no habrá un editor visual de diálogos en el MVP. Si se necesitan para una prueba, su contenido se escribirá manualmente en archivos JSON.
+- [x] Otros: explorador de recursos para importar, organizar y previsualizar imágenes, spritesheets y audio, y detectar recursos faltantes o referencias rotas.
 
-**Si el editor no está en el MVP, ¿cómo se crearán esos datos inicialmente?**  
-[Archivos escritos a mano, herramientas existentes, código u otra opción.]
 
 **Herramientas adicionales necesarias:**  
-[Empaquetador, conversor de recursos, depurador, etc.]
+- Generador de código C++ para convertir los layouts de interfaz del editor en código que use la API Builder.
+- CLI en Python para validar y empaquetar niveles y recursos.
+- Validación de referencias a recursos y errores descriptivos antes de generar código o paquetes.
+- Capas de validación de Vulkan y registros de errores para depurar el runtime durante el desarrollo.
 
 ---
 
