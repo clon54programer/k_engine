@@ -72,19 +72,29 @@ Para el nucleo, Abrir una ventana con GLFW3, inicializar el pipeline básico de 
 ## 3. Alcance del MVP
 
 ### Debe incluir
-- [ ] Compilar para linux y Android (Version 15 para arm)
-- [ ] [Función o capacidad necesaria]
-- [ ] [Función o capacidad necesaria]
+- [ ] Ejecutarse en Linux  mint xfce y x86_64.
+- [ ] Instalarse y ejecutarse en un dispositivo Android 15 (API 35) o superior
+      con arquitectura arm64-v8a y soporte Vulkan requerido.
+- [ ] Renderizar un sprite cargado desde un contenedor creado por el empaquetador.
+- [ ] Crear, guardar y cargar un nivel 2D básico desde el editor.
+- [ ] Crear y previsualizar una animación básica a partir de una spritesheet.
+- [ ] Exportar los datos y recursos del editor y cargarlos correctamente en el runtime.
+- [ ] Completar una prueba de extremo a extremo con un nivel pequeño.
+- [ ] Proporcionar una versión ejecutable para Linux y un paquete instalable
+      para Android, junto con instrucciones básicas de prueba.
+- [ ] Multijugador local
 
 ### No incluirá en esta primera versión
-- [ ]  
-- [ ] 3D
-- [ ] Compilar para windows y webassmbly
+- [ ] Renderizado 3D ni herramientas de edición 3D.
+- [ ] Compilación o distribución para Windows y WebAssembly.
+- [ ] Multijugador  en línea.
+- [ ] Compatibilidad garantizada con distribuciones o dispositivos no probados.
 
 ### Motivo de estas prioridades
-La de las plataformas, porque no tengo acceso a un computador con windows y
-webAssmbly, por el tema que debo usar otra api diferente a Vulkan. Y, 
-el 3D porque no tengo los conocimientos artisticos para crear algo en 3D.
+El MVP prioriza las plataformas que puedo probar directamente: Linux y mi
+dispositivo Android. Windows y WebAssembly quedan para más adelante; este último
+también requiere resolver una estrategia gráfica distinta a Vulkan. El alcance
+se limita a las funciones 2D necesarias para validar el flujo completo del engine.
 
 ---
 
