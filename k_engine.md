@@ -142,10 +142,12 @@ La narrativa sera importante de forma indirecta al gameplay, ya que segun las in
 - [ ]
 
 **Modo de juego:**  
-Individual offline y multijugador local 1 vs 1 o 3 vs 3 en una red local.
+Individual offline y multijugador competitivo mediante una red local, con modos 1 vs. 1 y 3 vs. 3. En el multijugador cada jugador elegi un personaje disponible del modo offline.
 
-**¿Qué parte del juego se desarrollará para validar el MVP del engine?**  
-[Por ejemplo: una pantalla, un nivel corto o una sección jugable.]
+**¿Qué parte del juego se desarrollará para validar el MVP del engine?**   
+Se desarrollará un nivel corto, individual y sin conexión a internet, con tres personajes provisionales entre los que el jugador pueda cambiar. El nivel tendrá carriles de profundidad con conexiones definidas, un enemigo, un ataque básico y un objetivo sencillo. Se usarán una cuadrícula, animaciones y recursos creados para la prueba; estos se empaquetarán y cargarán desde el runtime.
+
+La selección completa de armas y hechizos, el inventario durante el nivel, el sistema de sigilo y el multijugador competitivo en red local quedarán fuera de esta prueba inicial.
 
 ---
 
