@@ -127,10 +127,12 @@ Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de va
 ## 5. El juego que utilizará el engine
 
 **Género:**  
-[Ej.: plataformas de acción]
+plataformas de acción 2d y hack and slash
 
 **Descripción breve:**  
-[¿Qué hace el jugador y cuál es el objetivo del juego?]
+El jugador elige 3 personajes, pero solo aparece y controla en su vista. Cada personaje
+puede usar hechizos comunes, hechizos especificos por naturaleza o faccion, hechizos personales,
+armas de fuego y armas blancas. En cada nivel el jugador va por un objetivo (robar o alcanzar un objecto, o eliminar a alguien), normalmente se lucha de forma lineal (con profundidad) hasta llegar a ese objetivo, y en niveles muy especificos son sigilos.
 
 **Características centrales del juego:**
 - [ ]
@@ -138,7 +140,7 @@ Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de va
 - [ ]
 
 **Modo de juego:**  
-[Individual, multijugador local, en línea u otro.]
+Individual offline y multijugador local 1 vs 1 o 3 vs 3.
 
 **¿Qué parte del juego se desarrollará para validar el MVP del engine?**  
 [Por ejemplo: una pantalla, un nivel corto o una sección jugable.]
