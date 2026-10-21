@@ -101,22 +101,24 @@ se limita a las funciones 2D necesarias para validar el flujo completo del engin
 ## 4. Plataformas objetivo
 
 ### Linux
-- **Distribución o distribuciones objetivo:** [Por decidir]
-- **Arquitectura:** [x86_64, ARM64 u otra]
-- **Forma de distribución:** [Por decidir]
-- **Versión mínima del sistema:** [Por decidir]
-- **Dispositivos de prueba disponibles:** [Por completar]
+- **Distribución objetivo para el MVP:** Linux Mint 22.2 Xfce (Zara).
+- **Arquitectura:** x86_64
+- **Forma de distribución para el MVP:** Ejecutable nativo para probar en el sistema objetivo; no se requiere instalador.
+- **Versión mínima del sistema:** Linux Mint 22.2.
+- **Dispositivos de prueba disponibles:** El equipo de desarrollo con Linux Mint 22.2 Xfce.
+- **Métodos de entrada:** Teclado y ratón.
 
 ### Android
-- **Versión mínima:** Android 15 (API 35)
-- **Dispositivo de prueba:** [Modelo y características, si se conocen]
-- **Forma de instalación o distribución:** [APK, otra, por decidir]
-- **Orientación de pantalla:** [Horizontal / vertical / ambas]
-- **Métodos de entrada necesarios:** [Táctil, mando, teclado u otros]
+- **Versión mínima:** Android 15 (API 35).
+- **Arquitectura objetivo:** arm64-v8a.
+- **Dispositivo de prueba:** Teléfono del desarrollador con Android 15 y arquitectura arm64-v8a; Mto G34 5G
+- **Forma de instalación para el MVP:** APK instalable manualmente en el dispositivo de prueba.
+- **Orientación de pantalla:** Horizontal, recomendada para el juego de plataformas;
+- **Métodos de entrada:** Pantalla táctil.
 
 ### Plataformas futuras
-[¿Hay plataformas que se quieran considerar después del MVP?]
-
+Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de validar el engine en Linux Mint y Android. También se podrá ampliar la compatibilidad a otras distribuciones de Linux y dispositivos Android.
+La versión de Android y la arquitectura no garantizan por sí solas que el teléfono tenga las capacidades Vulkan necesarias; conviene verificarlo en el dispositivo antes de fijar ese requisito como definitivo.
 ---
 
 ## 5. El juego que utilizará el engine
