@@ -347,16 +347,25 @@ El editor permite crear el contenido básico de la prueba; el empaquetador produ
 ## 13. Suposiciones y preguntas abiertas
 
 ### Suposiciones actuales
-- [ ]
-- [ ]
+- El MVP se probará en Linux Mint 22.2 Xfce, arquitectura x86_64, y en Android 15 o superior, arquitectura arm64-v8a. Los dispositivos de referencia son el PC con GPU AMD Radeon Graphics (`1002:15e7`) y el Moto G34 5G con Android 16.
+- La API pública del núcleo ocultará los detalles de plataforma. La lógica del juego y el editor no dependerán directamente de GLFW ni de las APIs nativas de Android.
+- El editor guardará niveles, animaciones y layouts de interfaz en formatos editables. Los niveles y las animaciones se convertirán a FlatBuffers; los layouts de interfaz generarán código C++.
+- El empaquetador incluirá los recursos y los datos FlatBuffers en un `.pak`. Se cifrará el índice para ocultar la estructura del paquete, pero no los recursos multimedia.
+- Los diálogos y la lógica del juego se implementarán directamente en C++ durante el MVP.
 
 ### Preguntas que necesito resolver
-- [ ]
-- [ ]
+- ¿Qué versión de Vulkan y qué controlador están disponibles realmente en la GPU Linux? El reporte actual confirma OpenGL, pero no Vulkan.
+- ¿Qué modo AES-128 se usará para cifrar y autenticar el índice del `.pak`, y cómo se generará y almacenará la clave y el nonce?
+- ¿Cómo se representarán en Box2D los carriles de profundidad y sus conexiones, y cuándo podrá un raycast alcanzar objetos de otro carril?
+- ¿Funcionan GLFW3 en Linux, la integración nativa de Android, miniaudio y Box2D de forma fiable en los dispositivos objetivo?
+- ¿Cómo se generará y compilará el C++ producido por el editor junto con el juego en Linux y Android?
 
 ### Decisiones que no necesito tomar todavía
-- [ ]
-- [ ]
+- Soporte para Windows, WebAssembly y otras distribuciones o dispositivos distintos de los objetivos de prueba del MVP.
+- La implementación completa del multijugador competitivo por LAN, incluidos sesiones, sincronización y desconexiones. La lógica del juego y la entrada se mantendrán separadas para facilitar su incorporación posterior.
+- El editor visual de diálogos y la implementación completa de sus ramas y consecuencias.
+- Las funciones avanzadas de audio y la animación esquelética completa con huesos, slots y attachments.
+- La distribución comercial, la publicación en tiendas y la contratación de servidores.
 
 ---
 
