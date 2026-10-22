@@ -200,24 +200,45 @@ Sí. Se usará para crear y guardar niveles, animaciones básicas e interfaces d
 
 ## 8. Datos y recursos
 
-**Tipos de recursos necesarios:**  
-[Imágenes, audio, fuentes, mapas, diálogos, etc.]
+## 8. Datos y recursos
 
-**Formato editable durante el desarrollo:**  
-[JSON, archivos propios u otro. Por decidir si no se sabe.]
+**Tipos de recursos necesarios:**
+- Imágenes y spritesheets, principalmente PNG.
+- Efectos de sonido y música, inicialmente WAV.
+- Fuentes y shaders compilados para Vulkan.
+- Niveles y datos de animación creados visualmente en el editor.
+- Layouts de interfaz creados visualmente en el editor y convertidos a código C++.
+- Diálogos y lógica del juego escritos directamente en C++.
 
-**Formato utilizado al ejecutar el juego:**  
-[Igual al editable / formato convertido / por decidir.]
+**Formato editable durante el desarrollo:**
+- Los niveles, las animaciones y los layouts de interfaz se guardarán en archivos JSON, con una versión de esquema definida.
+- Los archivos multimedia se conservarán en su formato original dentro del proyecto.
+- Los esquemas FlatBuffers (`.fbs`) definirán el formato binario de los niveles y las animaciones.
+- El editor será la fuente editable de los layouts de interfaz. El generador de código los convertirá en C++ que use la API Builder del engine.
+- Los diálogos y la lógica del juego se mantendrán en archivos C++.
 
-**¿Se necesita agrupar o comprimir recursos?**  
-[Qué necesidad concreta debe resolver.]
+**Formato utilizado al ejecutar el juego:**
+- El empaquetador validará los JSON de niveles y animaciones y los convertirá a buffers binarios FlatBuffers usando los esquemas `.fbs`.
+- El runtime C++ utilizará el código de acceso generado por `flatc` y verificará cada buffer FlatBuffers antes de leerlo.
+- Los buffers de niveles y animaciones, junto con los recursos multimedia, se incluirán como entradas de un archivo `.pak` versionado.
+- El código C++ generado a partir de los layouts de interfaz se compilará con el juego; no se incluirá como layout dentro del `.pak`.
 
-**¿Se necesita cifrar recursos?**  
-[Qué información se intenta proteger y por qué.]
+**¿Se necesita agrupar o comprimir recursos?**
+- Sí. El empaquetador agrupará los recursos y los buffers FlatBuffers en un archivo `.pak`.
+- No se aplicará compresión adicional a PNG, JPG ni a otros formatos que ya estén comprimidos.
+- Se podrá comprimir otros datos si las pruebas muestran una reducción útil del tamaño. El índice registrará el método de compresión y los tamaños comprimido y original de cada entrada.
+- El empaquetador validará las referencias a recursos, los offsets y los tamaños antes de generar el paquete.
 
-**Identificación de recursos:**  
-[Nombre, ID único, hash u otro. Por decidir.]
+**¿Se necesita cifrar recursos?**
+El índice del `.pak` se cifrará con AES-128-GCM para ocultar su estructura, incluidas las entradas y sus ubicaciones. El encabezado inicial permanecerá sin cifrar y contendrá únicamente la información necesaria para identificar el formato y localizar el índice cifrado. El encabezado se autenticará junto con el índice.
 
+Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero no impide extraer o inspeccionar recursos que se almacenen en formatos reconocibles. Cada paquete usará un nonce único para AES-GCM. La clave se almacenará en el juego; por ello, este cifrado busca dificultar la inspección casual del paquete, no ofrecer protección absoluta frente a la ingeniería inversa.
+
+**Identificación de recursos:**
+- Cada recurso tendrá un ID estable asignado y guardado en los datos del proyecto.
+- La ruta relativa del archivo servirá para localizarlo durante el desarrollo.
+- El índice cifrado asociará cada ID con el tipo, offset, tamaño, método de compresión y suma de comprobación de la entrada correspondiente.
+- Los hashes de contenido no se usarán como identificadores principales, porque cambian cuando cambia el archivo. Una suma de comprobación podrá usarse aparte para detectar corrupción accidental.
 ---
 
 ## 9. Decisiones técnicas
