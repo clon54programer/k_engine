@@ -376,8 +376,8 @@ Tengo más de dos años de experiencia práctica con C++ y Python. He creado pro
 
 **Herramientas y sistema de desarrollo:**
 - Sistema principal: Linux Mint 22.2 Xfce (Zara).
-- Compilador: GCC [versión por confirmar].
-- Sistema de compilación: CMake [versión por confirmar].
+- Compilador: GCC 13.3.0.
+- Sistema de compilación: CMake 3.28.3.
 - Editor de código: VS Code; también utilizo Helix.
 - Harness principal: OpenCode.
 
