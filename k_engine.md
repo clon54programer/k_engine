@@ -372,13 +372,23 @@ El editor permite crear el contenido básico de la prueba; el empaquetador produ
 ## 14. Contexto del desarrollador
 
 **Experiencia relevante:**  
-[ ]
+Tengo más de dos años de experiencia práctica con C++ y Python. He creado prototipos con raylib en C++ y con Godot usando GDScript. Tengo poca experiencia en programación gráfica: he realizado algunas pruebas superficiales con OpenGL, pero todavía no tengo una base sólida en Vulkan.
 
-**Herramientas y sistema de desarrollo:**  
-[ ]
+**Herramientas y sistema de desarrollo:**
+- Sistema principal: Linux Mint 22.2 Xfce (Zara).
+- Compilador: GCC [versión por confirmar].
+- Sistema de compilación: CMake [versión por confirmar].
+- Editor de código: VS Code; también utilizo Helix.
+- Harness principal: OpenCode.
 
-**Limitaciones importantes de tiempo, equipo o conocimientos:**  
-[ ]
+**Limitaciones importantes de tiempo, equipo o conocimientos:**
+
+### Equipo y disponibilidad
+Utilizo habitualmente tanto el ordenador como el teléfono, y a veces tengo que interrumpir el trabajo o las pruebas para cargarlos. La disponibilidad de ambos dispositivos puede ser intermitente.
+
+### Conocimientos
+- Tengo poca experiencia con programación gráfica y Vulkan; mis pruebas con OpenGL han sido superficiales.
+- No domino la gestión manual de hilos.
 
 **Preferencias de colaboración o revisión:**  
-[ ]
+Usaré OpenCode y agentes de IA con modelos de DeepSeek como apoyo al desarrollo. Revisaré e integraré las propuestas en el proyecto. Un amigo participará como beta tester de los productos finales; no es programador y no probará habitualmente prototipos técnicos o herramientas internas.
