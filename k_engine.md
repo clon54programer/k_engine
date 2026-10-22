@@ -82,7 +82,7 @@ Para el nucleo, Abrir una ventana con GLFW3, inicializar el pipeline básico de 
 - [ ] Completar una prueba de extremo a extremo con un nivel pequeño.
 - [ ] Proporcionar una versión ejecutable para Linux y un paquete instalable
       para Android, junto con instrucciones básicas de prueba.
-- [ ] Multijugador local
+- [ ] preparación arquitectónica para red 
 
 ### No incluirá en esta primera versión
 - [ ] Renderizado 3D ni herramientas de edición 3D.
@@ -257,7 +257,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 | Datos de niveles y animaciones | JSON editable convertido a buffers FlatBuffers mediante esquemas `.fbs` | Evita parsear JSON durante la ejecución y permite definir un formato binario versionado | Cargar JSON directamente; formato binario propio | Decidido |
 | Interfaz de usuario | Layouts responsive creados visualmente en el editor y convertidos a C++ mediante una API Builder propia, sin macros | Permite diseñar interfaces en el editor y adaptar su distribución a distintas pantallas | Layouts escritos a mano en C++; sistema inspirado en Clay sin generación de código | Decidido; falta definir el generador |
 | Diálogos y lógica del juego | Se implementan directamente en C++ | No se editarán visualmente en el MVP | Editor visual de diálogos; archivos de datos interpretados en runtime | Decidido para el MVP |
-| Contenedor de recursos | Archivo `.pak` versionado con recursos y buffers FlatBuffers; índice cifrado con AES-128 para ocultar la estructura del paquete | Agrupa los datos del runtime y oculta la información del índice | Archivos sueltos; cifrar todo el paquete | Decidido el objetivo; modo AES, autenticación y gestión de clave por investigar |
+| Contenedor de recursos | Archivo `.pak` versionado con recursos y buffers FlatBuffers; índice cifrado con AES-128 para ocultar la estructura del paquete | Agrupa los datos del runtime y oculta la información del índice | Archivos sueltos; cifrar todo el paquete | Decidido el objetivo (AES-128-GCM); gestión de clave y nonce por investigar|
 
 ---
 
@@ -315,7 +315,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 **Problemas conocidos o riesgos:**
 - El reporte actual de la GPU Linux muestra OpenGL, pero no confirma la versión ni la disponibilidad de Vulkan, aunque con el modelo de la cpu, la version maxima es de 1.3. Verificarlo con `vulkaninfo --summary` y probar la presentación en X11.
 - El Moto G34 5G es el único dispositivo Android de prueba disponible; probarlo no demuestra compatibilidad con todos los dispositivos Android 15 o superiores.
-- Falta definir el modo y la gestión de claves de AES-128 para el índice del `.pak`; las pruebas de cifrado e integridad dependerán de esa decisión.
+- Falta definir la generación, el almacenamiento y la protección de la clave y del nonce para el índice del .pak (AES-128-GCM); las pruebas de cifrado e integridad dependerán de esa decisión.
 
 ---
 
@@ -355,7 +355,7 @@ El editor permite crear el contenido básico de la prueba; el empaquetador produ
 
 ### Preguntas que necesito resolver
 - ¿Qué versión de Vulkan y qué controlador están disponibles realmente en la GPU Linux? El reporte actual confirma OpenGL, pero no Vulkan.
-- ¿Qué modo AES-128 se usará para cifrar y autenticar el índice del `.pak`, y cómo se generará y almacenará la clave y el nonce?
+- ¿Cómo se generará, almacenará y (si aplica) rotará la clave AES-128 y el nonce único de cada paquete? El modo ya está fijado: AES-128-GCM.
 - ¿Cómo se representarán en Box2D los carriles de profundidad y sus conexiones, y cuándo podrá un raycast alcanzar objetos de otro carril?
 - ¿Funcionan GLFW3 en Linux, la integración nativa de Android, miniaudio y Box2D de forma fiable en los dispositivos objetivo?
 - ¿Cómo se generará y compilará el C++ producido por el editor junto con el juego en Linux y Android?
@@ -372,7 +372,7 @@ El editor permite crear el contenido básico de la prueba; el empaquetador produ
 ## 14. Contexto del desarrollador
 
 **Experiencia relevante:**  
-Tengo más de dos años de experiencia práctica con C++ y Python. He creado prototipos con raylib en C++ y con Godot usando GDScript. Tengo poca experiencia en programación gráfica: he realizado algunas pruebas superficiales con OpenGL, pero todavía no tengo una base sólida en Vulkan.
+Tengo mas de 3 años con C++ y más de 2 años con Python. He creado prototipos con raylib en C++ y con Godot usando GDScript. Tengo poca experiencia en programación gráfica: he realizado algunas pruebas superficiales con OpenGL, pero todavía no tengo una base sólida en Vulkan.
 
 **Herramientas y sistema de desarrollo:**
 - Sistema principal: Linux Mint 22.2 Xfce (Zara).
