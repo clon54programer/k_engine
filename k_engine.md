@@ -347,7 +347,7 @@ El editor permite crear el contenido básico de la prueba; el empaquetador produ
 ## 13. Suposiciones y preguntas abiertas
 
 ### Suposiciones actuales
-- El MVP se probará en Linux Mint 22.2 Xfce, arquitectura x86_64, y en Android 15 o superior, arquitectura arm64-v8a. Los dispositivos de referencia son el PC con GPU AMD Radeon Graphics (`1002:15e7`) y el Moto G34 5G con Android 16.
+- El PC de pruebas usa Linux Mint 22.2 Xfce x86_64 y un AMD Ryzen 3 7330U con Radeon Graphics integrada (dispositivo PCI `1002:15e7`). Vulkan en Linux está pendiente de verificación.
 - La API pública del núcleo ocultará los detalles de plataforma. La lógica del juego y el editor no dependerán directamente de GLFW ni de las APIs nativas de Android.
 - El editor guardará niveles, animaciones y layouts de interfaz en formatos editables. Los niveles y las animaciones se convertirán a FlatBuffers; los layouts de interfaz generarán código C++.
 - El empaquetador incluirá los recursos y los datos FlatBuffers en un `.pak`. Se cifrará el índice para ocultar la estructura del paquete, pero no los recursos multimedia.
