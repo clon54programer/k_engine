@@ -323,21 +323,24 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 
 | Etapa | Resultado esperado | Criterio para darla por terminada |
 |---|---|---|
-| 1. Investigación | [ ] | [ ] |
-| 2. Prototipo técnico | [ ] | [ ] |
-| 3. Funciones esenciales del engine | [ ] | [ ] |
-| 4. Prueba con contenido del juego | [ ] | [ ] |
-| 5. Pruebas en Linux y Android | [ ] | [ ] |
-| 6. MVP | [ ] | [ ] |
+| 1. Investigación y decisiones técnicas | Decisiones documentadas sobre Vulkan en Linux y Android, capa de plataforma, audio, Box2D, FlatBuffers y cifrado del índice del `.pak`. | Hay pruebas o documentación para las decisiones principales. Se verifica Vulkan en Linux con `vulkaninfo --summary` y en el Moto G34 5G. |
+| 2. Prototipo técnico multiplataforma | Aplicaciones de prueba para Linux y Android que crean la superficie Vulkan, reciben entrada y renderizan un sprite. | El prototipo funciona en Linux Mint 22.2 x86_64 y se instala y ejecuta en el Moto G34 5G con Android 16. En Android se prueba también la pausa y reanudación. |
+| 3. Funciones esenciales del núcleo | API pública del núcleo, backend de plataforma, renderizado 2D, entrada, audio básico, colisiones y raycasting, animación por fotogramas y diagnóstico de Vulkan. | El runtime carga y muestra una escena de prueba; reproduce audio WAV; y puede cerrarse o reanudarse sin errores atribuibles al núcleo. |
+| 4. Editor y generación de código | Editor visual para niveles, animaciones y layouts responsive de interfaz. Generador de C++ para los layouts. | Se pueden editar y guardar los datos, generar el C++, compilarlo con el juego y abrir el resultado. Los errores de generación indican qué dato debe corregirse. |
+| 5. Empaquetador y formatos de ejecución | CLI en Python que valida los datos, convierte niveles y animaciones JSON a FlatBuffers y crea el `.pak` con el índice cifrado. | El runtime valida y abre el índice, carga los recursos y lee los buffers FlatBuffers. El empaquetador rechaza referencias ausentes y archivos inválidos. |
+| 6. Prueba con contenido del juego | Nivel offline corto con tres personajes provisionales, cambio entre personajes, carriles de profundidad, un enemigo, un ataque y un objetivo sencillo. | El contenido se crea con las herramientas previstas, se empaqueta y se ejecuta en Linux y Android. Esta prueba no requiere implementar todo el inventario, el sigilo ni el multijugador. |
+| 7. Validación y entrega del MVP | Versiones ejecutables para Linux y Android, junto con instrucciones para probarlas. | Se completan las pruebas definidas para ambos dispositivos, se revisan los errores de Vulkan y se verifica el cierre limpio del runtime. |
+
 
 **Horas disponibles por semana:**  
-[ ]
+25 horas a al semana (martes, miercoles, jueves y viernes)
 
 **Fecha objetivo:**  
-[Incluye día, mes y año.]
+1 de diciembre de 2026
 
 **Qué significa “terminado” en esa fecha:**  
-[ ]
+El editor permite crear el contenido básico de la prueba; el empaquetador produce un `.pak` válido; y el runtime carga ese paquete y ejecuta el nivel de prueba en Linux Mint 22.2 y en el Moto G34 5G. Las funciones excluidas del MVP se especificarán en la sección de alcance.
+
 
 ---
 
