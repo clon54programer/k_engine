@@ -158,7 +158,6 @@ La selección completa de armas y hechizos, el inventario durante el nivel, el s
 
 ## 6. Requisitos funcionales del engine
 
-Anota qué debe poder hacer el engine. Marca cada punto como **necesario**, **deseable** o **futuro**.
 
 | Capacidad | Prioridad | Descripción o ejemplo |
 |---|---|---|
@@ -264,7 +263,6 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 
 ## 10. Requisitos de calidad
 
-Indica qué importa para el MVP y cómo se comprobará.
 
 | Requisito | Prioridad | Cómo comprobarlo |
 |---|---|---|
