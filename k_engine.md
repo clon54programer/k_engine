@@ -268,13 +268,13 @@ Indica qué importa para el MVP y cómo se comprobará.
 
 | Requisito | Prioridad | Cómo comprobarlo |
 |---|---|---|
-| Rendimiento | [ ] | [ ] |
-| Tiempo de carga | [ ] | [ ] |
-| Estabilidad | [ ] | [ ] |
-| Tamaño de la aplicación | [ ] | [ ] |
-| Facilidad para añadir contenido | [ ] | [ ] |
-| Compatibilidad entre Linux y Android | [ ] | [ ] |
-| Facilidad de depuración | [ ] | [ ] |
+| Rendimiento | Imprescindible | Ejecutar la misma escena de prueba en Linux Mint 22.2 y en el Moto G34 5G. Objetivo inicial: 60 FPS; registrar los tiempos de fotograma y comprobar que no haya caídas sostenidas durante una prueba de 5 minutos. |
+| Tiempo de carga | Deseable | Medir por separado el arranque en frío y la carga de un nivel de prueba en ambos destinos. Como objetivo provisional, comprobar si el nivel se carga en menos de 3 segundos y ajustar el umbral con los resultados reales. |
+| Estabilidad | Imprescindible | Ejecutar la escena durante 30 minutos y repetir cargas, cierres, pausas y reanudaciones en Android. No debe haber cierres inesperados ni errores de Vulkan causados por el núcleo. |
+| Tamaño de la aplicación | Deseable | Registrar el tamaño del APK y del `.pak` en una compilación de distribución. Fijar un límite cuando haya una muestra representativa de los recursos del juego. |
+| Facilidad para añadir contenido | Imprescindible | Crear un nivel y una animación básicos desde el editor, empaquetarlos y cargarlos sin modificar el código del núcleo. |
+| Compatibilidad entre Linux y Android | Imprescindible | Compilar y ejecutar la misma prueba funcional en Linux Mint 22.2 x86_64 y en el Moto G34 5G con Android 15 o superior, verificando Vulkan 1.1 en el dispositivo. |
+| Facilidad de depuración | Imprescindible | En una compilación de desarrollo, registrar los errores de Vulkan causados por el núcleo. Simular la ausencia de un recurso y comprobar que el mensaje identifique el recurso y la operación fallida. |
 
 ---
 
