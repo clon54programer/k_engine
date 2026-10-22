@@ -278,24 +278,43 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 
 ## 11. Pruebas y validación
 
-**Dispositivos y sistemas disponibles para probar:**  
-[ ]
+**Dispositivos y sistemas disponibles para probar:**
+- Linux Mint 22.2 Xfce (Zara), x86_64. GPU AMD Radeon Graphics (`1002:15e7`), pantalla de 1366 × 768 a 60 Hz y sesión X11.
+- Motorola Moto G34 5G, Android 16, arquitectura arm64-v8a. Versión mínima de Android prevista: 15 (API 35).
 
-**Qué debe probarse en Linux:**  
-[ ]
+**Qué debe probarse en Linux:**
+- Compilar y ejecutar el editor y el runtime en Linux Mint 22.2.
+- Verificar que Vulkan detecte la GPU AMD y pueda crear una superficie de presentación y renderizar.
+- Abrir un nivel y cargar desde el `.pak` una textura, una animación y datos FlatBuffers.
+- Probar el redimensionamiento de la ventana y el cierre limpio.
+- Medir el rendimiento de la escena de referencia a 1366 × 768.
 
-**Qué debe probarse en Android 15+:**  
-[ ]
+**Qué debe probarse en Android 15+:**
+- Instalar y ejecutar el APK arm64-v8a en el Moto G34 5G.
+- Consultar en tiempo de ejecución la versión de Vulkan y las capacidades que expone el driver.
+- Cargar y renderizar los recursos del `.pak`, reproducir audio WAV y probar la entrada táctil.
+- Probar pausa, reanudación y recreación de la superficie al cambiar de aplicación o volver a ella.
+- Medir el rendimiento y el tiempo de carga de la escena de referencia en el dispositivo.
 
-**Pruebas manuales necesarias:**  
-[ ]
+**Pruebas manuales necesarias:**
+- Crear y guardar un nivel y una animación en el editor; volver a abrirlos y comprobar que conservan sus datos.
+- Generar el código C++ de una interfaz, compilarlo e inspeccionar su layout en distintos tamaños de ventana.
+- Empaquetar el contenido, cargarlo desde el runtime y confirmar que el índice permite localizar los recursos.
+- Probar cambios de carril, colisiones y raycasting en la escena de prueba.
+- Comprobar los mensajes del núcleo cuando Vulkan no está disponible o falta un recurso.
+- Tras definir el modo de cifrado, probar que el runtime pueda leer un índice válido y rechace uno alterado.
 
-**Pruebas automatizadas necesarias:**  
-[ ]
+**Pruebas automatizadas necesarias:**
+- Verificar que el empaquetador rechace recursos inexistentes, referencias inválidas y archivos de entrada corruptos.
+- Verificar la serialización y lectura de niveles y animaciones FlatBuffers, incluidos buffers truncados o inválidos.
+- Probar el lector del `.pak` con índices y offsets válidos e inválidos.
+- Probar colisiones y raycasting a través de la interfaz del núcleo, sin exponer tipos de Box2D.
+- Comprobar que el núcleo pueda inicializarse, cargar una escena básica y cerrarse sin errores.
 
 **Problemas conocidos o riesgos:**
-- [ ]
-- [ ]
+- El reporte actual de la GPU Linux muestra OpenGL, pero no confirma la versión ni la disponibilidad de Vulkan, aunque con el modelo de la cpu, la version maxima es de 1.3. Verificarlo con `vulkaninfo --summary` y probar la presentación en X11.
+- El Moto G34 5G es el único dispositivo Android de prueba disponible; probarlo no demuestra compatibilidad con todos los dispositivos Android 15 o superiores.
+- Falta definir el modo y la gestión de claves de AES-128 para el índice del `.pak`; las pruebas de cifrado e integridad dependerán de esa decisión.
 
 ---
 
