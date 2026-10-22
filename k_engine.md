@@ -164,7 +164,7 @@ La selección completa de armas y hechizos, el inventario durante el nivel, el s
 | Renderizado 2D | Necesario | Renderizar sprites y texturas con Vulkan desde los recursos empaquetados. En Android, exigir Vulkan 1.1 o superior; verificar también los requisitos de GPU y driver en Linux. Permitir ordenar los personajes según su posición en los carriles de profundidad. |
 | Ventanas y superficies | Necesario | Crear la ventana o superficie de renderizado en Linux y Android. Gestionar redimensionamiento, recreación de la superficie y ciclo de pausa/reanudación en Android. |
 | Entrada | Necesario | Ofrecer acciones independientes del dispositivo. Para el MVP, admitir teclado y ratón en Linux y pantalla táctil en Android. El mando puede añadirse después. |
-| Física y colisiones | Necesario para el juego; raycasting deseable después del MVP inicial | Incluir movimiento 2D básico, colisiones y detección de impactos. Añadir consultas de raycasting para comprobar impactos de armas a distancia y línea de visión. El raycast de visión solo comprueba si hay obstáculos: el campo visual, la detección del jugador y las reglas de alerta pertenecen a la lógica del juego. Definir si un raycast puede atravesar carriles de profundidad o si solo afecta al carril correspondiente. |
+| Física y colisiones | Necesario para el juego; raycasting deseable después del MVP inicial | Incluir movimiento 2D básico, colisiones y detección de impactos para el ataque básico. Las consultas de raycasting (impactos de armas a distancia y línea de visión) se añadirán después del MVP; en esa fase se definirá si un raycast puede atravesar carriles de profundidad o si solo afecta al carril correspondiente. El campo visual, la detección del jugador y las reglas de alerta pertenecen a la lógica del juego. |
 | Animaciones | Necesario: animación por fotogramas en el MVP; Deseable: animación esquelética en una fase posterior | El MVP permite definir secuencias desde spritesheets y previsualizarlas. En una fase posterior, añadir un sistema 2D de huesos jerárquicos, slots asociados a huesos y attachments —por ejemplo, sprites que se puedan cambiar—, con clips que animen transformaciones y cambios de attachment. |
 | Interfaz de usuario | Necesario | La interfaz debe adaptarse al tamaño de ventana, resolución, orientación y escala de pantalla en Linux y Android. El sistema de layout estará inspirado en el enfoque responsive y declarativo de Clay, pero se implementará como una biblioteca C++ propia. La UI se construirá mediante una API de bajo nivel basada en el patrón Builder, sin macros, separando la descripción del layout de su renderizado. El MVP incluirá los componentes necesarios para el editor —paneles, botones, paleta de tiles, cuadrícula y controles de animación—. Más adelante, permitirá crear interfaces de juego, como el inventario que se abre sin pausar el nivel. |
 | Carga de recursos | Necesario | Leer y validar recursos desde un contenedor versionado, incluyendo imágenes y datos de niveles. Informar errores descriptivos si faltan recursos o el contenedor no es compatible. |
@@ -181,11 +181,12 @@ La selección completa de armas y hechizos, el inventario durante el nivel, el s
 ## 7. Editor y herramientas
 
 **¿El MVP necesita un editor visual?**  
-Sí. Se usará para crear y guardar niveles, animaciones básicas e interfaces de usuario.
+Se usará para crear y guardar niveles, animaciones básicas y las interfaces de usuario del propio editor.
 
 **¿Qué se podrá crear o modificar con el editor?**
 - [x] Niveles: tilemaps en cuadrícula, capas básicas y datos necesarios para representar los carriles de profundidad.
-- [x] Interfaz de usuario: diseñar interfaces responsive para el juego. El editor guardará los layouts en un formato editable; una herramienta de generación los convertirá a código C++ que construye la interfaz mediante la API Builder del engine. La lógica y los eventos del juego se implementarán en C++.
+- [x] Interfaz de usuario (del editor): el editor construye su propia interfaz (paneles, botones, paleta de tiles, cuadrícula y controles de animación) con la API Builder responsive del engine, lo que valida el sistema de UI. La lógica y los eventos del juego se implementarán en C++.
+- [ ] Interfaz de usuario (del juego) y generador de C++: diseñar visualmente layouts responsive para el juego (por ejemplo, el inventario que no pausa el nivel) y generarlos como código C++ mediante la API Builder quedará para una fase posterior.
 - [x] Animaciones: clips básicos creados a partir de fotogramas de una spritesheet.
 - [ ] Diálogos: no habrá un editor visual de diálogos en el MVP. Si se necesitan para una prueba, su contenido se escribirá manualmente en archivos JSON.
 - [x] Otros: explorador de recursos para importar, organizar y previsualizar imágenes, spritesheets y audio, y detectar recursos faltantes o referencias rotas.
@@ -301,7 +302,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 - Crear y guardar un nivel y una animación en el editor; volver a abrirlos y comprobar que conservan sus datos.
 - Generar el código C++ de una interfaz, compilarlo e inspeccionar su layout en distintos tamaños de ventana.
 - Empaquetar el contenido, cargarlo desde el runtime y confirmar que el índice permite localizar los recursos.
-- Probar cambios de carril, colisiones y raycasting en la escena de prueba.
+- Probar cambios de carril y  colisiones en la escena de prueba.
 - Comprobar los mensajes del núcleo cuando Vulkan no está disponible o falta un recurso.
 - Tras definir el modo de cifrado, probar que el runtime pueda leer un índice válido y rechace uno alterado.
 
@@ -309,7 +310,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 - Verificar que el empaquetador rechace recursos inexistentes, referencias inválidas y archivos de entrada corruptos.
 - Verificar la serialización y lectura de niveles y animaciones FlatBuffers, incluidos buffers truncados o inválidos.
 - Probar el lector del `.pak` con índices y offsets válidos e inválidos.
-- Probar colisiones y raycasting a través de la interfaz del núcleo, sin exponer tipos de Box2D.
+- Probar colisiones  a través de la interfaz del núcleo, sin exponer tipos de Box2D.
 - Comprobar que el núcleo pueda inicializarse, cargar una escena básica y cerrarse sin errores.
 
 **Problemas conocidos o riesgos:**
@@ -325,7 +326,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 |---|---|---|
 | 1. Investigación y decisiones técnicas | Decisiones documentadas sobre Vulkan en Linux y Android, capa de plataforma, audio, Box2D, FlatBuffers y cifrado del índice del `.pak`. | Hay pruebas o documentación para las decisiones principales. Se verifica Vulkan en Linux con `vulkaninfo --summary` y en el Moto G34 5G. |
 | 2. Prototipo técnico multiplataforma | Aplicaciones de prueba para Linux y Android que crean la superficie Vulkan, reciben entrada y renderizan un sprite. | El prototipo funciona en Linux Mint 22.2 x86_64 y se instala y ejecuta en el Moto G34 5G con Android 16. En Android se prueba también la pausa y reanudación. |
-| 3. Funciones esenciales del núcleo | API pública del núcleo, backend de plataforma, renderizado 2D, entrada, audio básico, colisiones y raycasting, animación por fotogramas y diagnóstico de Vulkan. | El runtime carga y muestra una escena de prueba; reproduce audio WAV; y puede cerrarse o reanudarse sin errores atribuibles al núcleo. |
+| 3. Funciones esenciales del núcleo | API pública del núcleo, backend de plataforma, renderizado 2D, entrada, audio básico, colisiones, animación por fotogramas y diagnóstico de Vulkan. | El runtime carga y muestra una escena de prueba; reproduce audio WAV; y puede cerrarse o reanudarse sin errores atribuibles al núcleo. |
 | 4. Editor y generación de código | Editor visual para niveles, animaciones y layouts responsive de interfaz. Generador de C++ para los layouts. | Se pueden editar y guardar los datos, generar el C++, compilarlo con el juego y abrir el resultado. Los errores de generación indican qué dato debe corregirse. |
 | 5. Empaquetador y formatos de ejecución | CLI en Python que valida los datos, convierte niveles y animaciones JSON a FlatBuffers y crea el `.pak` con el índice cifrado. | El runtime valida y abre el índice, carga los recursos y lee los buffers FlatBuffers. El empaquetador rechaza referencias ausentes y archivos inválidos. |
 | 6. Prueba con contenido del juego | Nivel offline corto con tres personajes provisionales, cambio entre personajes, carriles de profundidad, un enemigo, un ataque y un objetivo sencillo. | El contenido se crea con las herramientas previstas, se empaqueta y se ejecuta en Linux y Android. Esta prueba no requiere implementar todo el inventario, el sigilo ni el multijugador. |
@@ -356,7 +357,7 @@ El editor permite crear el contenido básico de la prueba; el empaquetador produ
 ### Preguntas que necesito resolver
 - ¿Qué versión de Vulkan y qué controlador están disponibles realmente en la GPU Linux? El reporte actual confirma OpenGL, pero no Vulkan.
 - ¿Cómo se generará, almacenará y (si aplica) rotará la clave AES-128 y el nonce único de cada paquete? El modo ya está fijado: AES-128-GCM.
-- ¿Cómo se representarán en Box2D los carriles de profundidad y sus conexiones, y cuándo podrá un raycast alcanzar objetos de otro carril?
+¿Cómo se representarán en Box2D los carriles de profundidad y sus conexiones?
 - ¿Funcionan GLFW3 en Linux, la integración nativa de Android, miniaudio y Box2D de forma fiable en los dispositivos objetivo?
 - ¿Cómo se generará y compilará el C++ producido por el editor junto con el juego en Linux y Android?
 
@@ -366,6 +367,7 @@ El editor permite crear el contenido básico de la prueba; el empaquetador produ
 - El editor visual de diálogos y la implementación completa de sus ramas y consecuencias.
 - Las funciones avanzadas de audio y la animación esquelética completa con huesos, slots y attachments.
 - La distribución comercial, la publicación en tiendas y la contratación de servidores.
+- Cuándo podrá un raycast alcanzar objetos de otro carril de profundidad (se decidirá al implementar el raycasting, después del MVP).
 
 ---
 
