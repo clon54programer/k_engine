@@ -287,7 +287,8 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 - Verificar que Vulkan detecte la GPU AMD y pueda crear una superficie de presentación y renderizar.
 - Abrir un nivel y cargar desde el `.pak` una textura, una animación y datos FlatBuffers.
 - Probar el redimensionamiento de la ventana y el cierre limpio.
-- Medir el rendimiento de la escena de referencia a 1366 × 768.
+- Comprobar el renderizado y el layout del editor en la resolución nativa de Linux (1366 × 768).
+- Medir el rendimiento con una escena de referencia y una resolución objetivo definida para cada plataforma.
 
 **Qué debe probarse en Android 15+:**
 - Instalar y ejecutar el APK arm64-v8a en el Moto G34 5G.
