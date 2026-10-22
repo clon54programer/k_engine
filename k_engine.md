@@ -392,3 +392,6 @@ Utilizo habitualmente tanto el ordenador como el teléfono, y a veces tengo que 
 
 **Preferencias de colaboración o revisión:**  
 Usaré OpenCode y agentes de IA con modelos de DeepSeek como apoyo al desarrollo. Revisaré e integraré las propuestas en el proyecto. Un amigo participará como beta tester de los productos finales; no es programador y no probará habitualmente prototipos técnicos o herramientas internas.
+
+**Desarrollo asistido por IA:**  
+OpenCode será el harness principal para planificar tareas, explorar el código y coordinar la generación de cambios. La mayor parte del código se generará con modelos DeepSeek a través de OpenCode. Yo definiré los requisitos, revisaré e integraré los cambios generados y ejecutaré las pruebas necesarias para validar el resultado.
