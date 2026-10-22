@@ -7,7 +7,7 @@ K_engine
 
 **¿Qué estoy creando?**  
 Un engine para mis proyectos personales que tengo 
-en planeación o que pienso desarrollar en el futuro.
+en planeación o que pienso desarrollar en el futuro. El runtime se ejecutará en todas las plataformas objetivo; el editor y el empaquetador serán herramientas de escritorio.
 
 **¿Qué problema, necesidad o meta resuelve?**  
 Tener un Game engine que sea un balance entre control de bajo nivel 
@@ -32,7 +32,7 @@ Quiero que permita realizar juegos comerciales o para mi, usando C++ como
 lenguaje principal.
 
 ### Objetivo del primer MVP
-Para el núcleo, abrir una ventana con GLFW3, inicializar el pipeline básico de Vulkan para renderizar un sprite/textura 2D en pantalla desde un contenedor binario personalizado, y permitir cerrar la aplicación de forma limpia. Y, para el editor, crear una herramienta GUI accesible que permita colocar baldosas (tiles) en una cuadrícula 2D, definir una secuencia de fotogramas (spritesheet) para una animación básica, y exportar/guardar todo en el formato JSON que el motor C++ pueda cargar e interpretar. Desarrollar una CLI en Python que tome los archivos fuente del editor (niveles JSON y recursos multimedia raw como imágenes PNG y audios WAV), los valide, los estructure y los empaquete en un único archivo binario contenedor (.pak) con una cabecera (header) e índice de recursos que el motor en C++ pueda leer de forma eficiente.
+Para el runtime, abrir una ventana o superficie, inicializar el pipeline básico de Vulkan para renderizar un sprite/textura 2D desde un contenedor binario personalizado y permitir cerrar la aplicación de forma limpia en todas las plataformas objetivo. Para las herramientas de escritorio, crear un editor GUI que permita colocar baldosas (tiles) en una cuadrícula 2D y definir una secuencia de fotogramas (spritesheet) para una animación básica. Durante el desarrollo, los proyectos y sus niveles y animaciones se guardarán en JSON. Cuando se prepare un juego para distribución, una CLI en Python validará esos JSON y los convertirá a buffers FlatBuffers; después empaquetará esos buffers y los recursos multimedia (por ejemplo, PNG y WAV) en un archivo binario (.pak) que el runtime C++ pueda leer de forma eficiente.
 
 ### Cómo sabré que el MVP está terminado
 
@@ -56,13 +56,13 @@ Para el núcleo, abrir una ventana con GLFW3, inicializar el pipeline básico de
 
 - [ ] Persistencia de datos: El editor permite guardar y cargar el estado del proyecto para continuar editando.
 
-- [ ] Exportación para el Motor: Exporta el nivel y los datos de animación a un formato estructurado json que el motor C++ lee sin errores de parseo.
+- [ ] Datos de desarrollo y distribución: El editor guarda los niveles y las animaciones en JSON durante el desarrollo. Para distribuir un juego, el empaquetador valida esos datos, los convierte a FlatBuffers y los incluye en el `.pak` que lee el runtime C++.
 
 #### Empaquetador
 
 - [ ] Contenedor de recursos: La versión 1 incluirá una cabecera versionada, un índice de recursos y los datos de cada recurso. El índice permitirá localizar y validar las entradas. La política de compresión y el formato de los niveles se definirán explícitamente; el hecho de usar un contenedor binario no implica que todos sus contenidos deban convertirse a binario.
 
-- [ ] Conversión de Niveles: Convierte la estructura lógica del editor (JSON) a un formato binario compacto (evitando procesar cadenas de texto en C++ en tiempo de ejecución).
+- [ ] Conversión para distribución: Al preparar un juego para distribución, convierte la estructura lógica del editor (JSON) a FlatBuffers, evitando procesar cadenas de texto en C++ en tiempo de ejecución.
 
 - [ ] Inclusión Multimedia: Empaqueta imágenes (PNG/JPG) y otros assets (audio, fuentes, etc.) sin corromper sus bytes ni modificar su alineación necesaria para la carga.
 
@@ -76,12 +76,13 @@ Para el núcleo, abrir una ventana con GLFW3, inicializar el pipeline básico de
 
 ### Debe incluir
 - [ ] Ejecutarse en Linux Mint Xfce y x86_64.
-- [ ] Instalarse y ejecutarse en un dispositivo Android 15 (API 35) o superior
+- [ ] Instalarse y ejecutarse en un dispositivo Android 16 (API 36) o superior
       con arquitectura arm64-v8a y soporte Vulkan requerido.
+- [ ] Ejecutar el runtime en todas las plataformas objetivo del MVP (Linux y Android). El editor visual y el empaquetador serán herramientas de escritorio; en el MVP, se ejecutarán en Linux.
 - [ ] Renderizar un sprite cargado desde un contenedor creado por el empaquetador.
 - [ ] Crear, guardar y cargar un nivel 2D básico desde el editor.
 - [ ] Crear y previsualizar una animación básica a partir de una spritesheet.
-- [ ] Exportar los datos y recursos del editor y cargarlos correctamente en el runtime.
+- [ ] Guardar los datos del editor en JSON durante el desarrollo; al preparar la distribución, convertirlos a FlatBuffers y empaquetarlos con los recursos para cargarlos correctamente en el runtime.
 - [ ] Completar una prueba de extremo a extremo con un nivel pequeño.
 - [ ] Proporcionar una versión ejecutable para Linux y un paquete instalable
       para Android, junto con instrucciones básicas de prueba.
@@ -106,25 +107,25 @@ se limita a las funciones 2D necesarias para validar el flujo completo del engin
 ### Linux
 - **Distribución objetivo para el MVP:** Linux Mint 22.2 Xfce (Zara).
 - **Arquitectura:** x86_64
-- **Forma de distribución para el MVP:** Ejecutable nativo para probar en el sistema objetivo; no se requiere instalador.
+- **Forma de distribución para el MVP:** Runtime y herramientas de escritorio ejecutables de forma nativa para probar en el sistema objetivo; no se requiere instalador.
 - **Versión mínima del sistema:** Linux Mint 22.2.
 - **Dispositivos de prueba disponibles:** El equipo de desarrollo con Linux Mint 22.2 Xfce.
 - **Métodos de entrada:** Teclado y ratón.
 
 ### Android
-- **Versión mínima:** Android 15 (API 35).
+- **Versión mínima:** Android 16 (API 36).
 - **SDK objetivo para Google Play:** `targetSdkVersion` 36 o superior para nuevas apps y actualizaciones, según la política vigente.
 - **SDK de compilación:** `compileSdkVersion` 36 o superior.
 - **Arquitectura objetivo:** arm64-v8a.
 - **Dispositivo de prueba:** Moto G34 5G con Android 16 y arquitectura arm64-v8a.
-- **Forma de instalación para el MVP:** APK instalable manualmente en el dispositivo de prueba.
+- **Forma de instalación para el MVP:** APK instalable manualmente en el dispositivo de prueba; contiene el runtime, no el editor ni el empaquetador.
 - **Orientación de pantalla:** Horizontal, recomendada para el juego de plataformas.
 - **Métodos de entrada:** Pantalla táctil.
 - **Requisito gráfico en Android:** Vulkan 1.1 o superior. Verificar las capacidades expuestas por el driver en el Moto G34 5G.
 
 
 ### Plataformas futuras
-Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de validar el engine en Linux Mint y Android. También se podrá ampliar la compatibilidad a otras distribuciones de Linux y dispositivos Android. Además, se evaluará ampliar la compatibilidad de Android hasta Android 10 (API 29), manteniendo Vulkan 1.1 como requisito gráfico. Este cambio solo se considerará después de probar el engine en dispositivos reales con distintas GPU y drivers; si no se pueden realizar esas pruebas, no se declarará compatibilidad con Android 10.
+Windows y WebAssembly quedan fuera del MVP. Se podrán considerar después de validar el engine en Linux Mint y Android. También se podrá ampliar la compatibilidad a otras distribuciones de Linux y dispositivos Android. El mínimo del MVP es Android 16 (API 36); en una fase posterior se podrá evaluar reducir el mínimo hasta Android 10 (API 29), manteniendo Vulkan 1.1 como requisito gráfico. Este cambio solo se considerará después de probar el engine en dispositivos reales con distintas GPU y drivers; si no se pueden realizar esas pruebas, no se declarará compatibilidad con Android 10.
 ---
 
 ## 5. El juego que utilizará el engine
@@ -172,14 +173,14 @@ La selección completa de armas y hechizos, el inventario durante el nivel, el s
 | Entrada | Necesario | Ofrecer acciones independientes del dispositivo. Para el MVP, admitir teclado y ratón en Linux y pantalla táctil en Android. El mando puede añadirse después. |
 | Física y colisiones | Necesario para el juego; raycasting deseable después del MVP inicial | Incluir movimiento 2D básico, colisiones y detección de impactos para el ataque básico. Usar un único mundo Box2D para todo el nivel, con X = horizontal, Y = vertical (salto y gravedad); el carril se representa como metadato del cuerpo y se filtra con una máscara de carril (lane mask), de modo que por defecto las entidades solo interactúan con las de su propio carril. Las consultas de raycasting (impactos de armas a distancia y línea de visión) se añadirán después del MVP; en esa fase se definirá si un raycast puede atravesar carriles de profundidad o si solo afecta al carril correspondiente. El campo visual, la detección del jugador y las reglas de alerta pertenecen a la lógica del juego. |
 | Animaciones | Necesario: animación por fotogramas en el MVP; Deseable: animación esquelética en una fase posterior | El MVP permite definir secuencias desde spritesheets y previsualizarlas. En una fase posterior, añadir un sistema 2D de huesos jerárquicos, slots asociados a huesos y attachments —por ejemplo, sprites que se puedan cambiar—, con clips que animen transformaciones y cambios de attachment. |
-| Interfaz de usuario | Necesario | La interfaz debe adaptarse al tamaño de ventana, resolución, orientación y escala de pantalla en Linux y Android. El sistema de layout estará inspirado en el enfoque responsive y declarativo de Clay, pero se implementará como una biblioteca C++ propia. La UI se construirá mediante una API de bajo nivel basada en el patrón Builder, sin macros, separando la descripción del layout de su renderizado. El MVP incluirá los componentes necesarios para el editor —paneles, botones, paleta de tiles, cuadrícula y controles de animación—. Más adelante, permitirá crear interfaces de juego, como el inventario que se abre sin pausar el nivel. |
+| Interfaz de usuario | Necesario | La UI del runtime debe adaptarse al tamaño de ventana, resolución, orientación y escala de pantalla en Linux y Android. El editor es una herramienta de escritorio y su UI debe adaptarse a los tamaños de ventana de escritorio. El sistema de layout estará inspirado en el enfoque responsive y declarativo de Clay, pero se implementará como una biblioteca C++ propia. La UI se construirá mediante una API de bajo nivel basada en el patrón Builder, sin macros, separando la descripción del layout de su renderizado. El MVP incluirá los componentes necesarios para el editor —paneles, botones, paleta de tiles, cuadrícula y controles de animación—. Más adelante, permitirá crear interfaces de juego, como el inventario que se abre sin pausar el nivel. |
 | Carga de recursos | Necesario | Leer y validar recursos desde un contenedor versionado, incluyendo imágenes y datos de niveles. Informar errores descriptivos si faltan recursos o el contenedor no es compatible. |
 | Carga de niveles | Necesario | Cargar un nivel 2D con tiles, capas, objetos y carriles de profundidad. El nivel debe poder representar dónde existen carriles, en qué tramos, y las zonas de conexión donde se permite cambiar entre ellos; las reglas de combate y sigilo pertenecen al juego. |
 | Guardado de datos | Necesario | Guardar y cargar los proyectos editables del editor. El guardado de progreso, decisiones narrativas y recursos de campaña queda para una fase posterior. |
 | Red | Necesario: preparación arquitectónica; Futuro: partidas multijugador completas | Mantener la simulación y el estado del juego separados del renderizado y de la entrada física. Representar las acciones como comandos que puedan proceder del jugador local o de la red, usar un paso de simulación independiente de la tasa de renderizado y asignar identificadores estables a las entidades. Antes de implementar el combate completo, realizar un prototipo que intercambie acciones o estado entre dos instancias. Las partidas LAN 1 vs. 1 y 3 vs. 3, las salas y la gestión de desconexiones quedan para una fase posterior. |
 | Audio | Necesario | Cargar audio desde el contenedor y reproducir efectos de sonido y música 2D. Para el MVP, admitir archivos WAV, reproducción, pausa, reanudación, detención, repetición y control básico de volumen. Gestionar la pausa y reanudación de la aplicación en Android. No incluir audio espacial, efectos DSP ni mezcla avanzada. |
-| Editor de niveles y animaciones | Necesario | Permitir crear un nivel en cuadrícula, seleccionar y colocar tiles, editar capas y crear una animación básica. Guardar el proyecto y exportar sus datos. |
-| Empaquetador | Necesario | Incluir una CLI en Python que valide los recursos y niveles, detecte referencias ausentes y genere un contenedor que el runtime C++ pueda leer. |
+| Editor de niveles y animaciones | Necesario; herramienta de escritorio | Permitir crear un nivel en cuadrícula, seleccionar y colocar tiles, editar capas y crear una animación básica. Guardar el proyecto y sus datos de desarrollo en JSON. |
+| Empaquetador | Necesario; herramienta de escritorio | Incluir una CLI en Python que valide los recursos y niveles, detecte referencias ausentes, convierta los JSON de desarrollo a FlatBuffers para distribución y genere un contenedor que el runtime C++ pueda leer. |
 | Otras | Deseable | Facilitar mensajes de diagnóstico útiles para errores de carga, inicialización de Vulkan y recursos incompatibles. |
 
 ---
@@ -187,11 +188,11 @@ La selección completa de armas y hechizos, el inventario durante el nivel, el s
 ## 7. Editor y herramientas
 
 **¿El MVP necesita un editor visual?**  
-Se usará para crear y guardar niveles, animaciones básicas y las interfaces de usuario del propio editor.
+Sí. Será una herramienta de escritorio (en el MVP, para Linux) para crear y guardar niveles y animaciones básicas en JSON durante el desarrollo. No se instalará ni ejecutará en Android; el runtime sí se ejecutará tanto en Linux como en Android.
 
 **¿Qué se podrá crear o modificar con el editor?**
 - [x] Niveles: tilemaps en cuadrícula, capas básicas y datos necesarios para representar los carriles de profundidad y sus zonas de conexión.
-- [x] Interfaz de usuario (del editor): el editor construye su propia interfaz (paneles, botones, paleta de tiles, cuadrícula y controles de animación) con la API Builder responsive del engine, lo que valida el sistema de UI. La lógica y los eventos del juego se implementarán en C++.
+- [x] Interfaz de usuario (del editor): el editor de escritorio construye su propia interfaz (paneles, botones, paleta de tiles, cuadrícula y controles de animación) con la API Builder del engine, lo que valida el sistema de UI. La lógica y los eventos del juego se implementarán en C++.
 - [ ] Interfaz de usuario (del juego) y generador de C++: diseñar visualmente layouts responsive para el juego (por ejemplo, el inventario que no pausa el nivel) y generarlos como código C++ mediante la API Builder quedará para una fase posterior.
 - [x] Animaciones: clips básicos creados a partir de fotogramas de una spritesheet.
 - [ ] Diálogos: no habrá un editor visual de diálogos en el MVP. Si se necesitan para una prueba, su contenido se escribirá manualmente en archivos JSON.
@@ -199,7 +200,7 @@ Se usará para crear y guardar niveles, animaciones básicas y las interfaces de
 
 
 **Herramientas adicionales necesarias:**  
-- CLI en Python para validar y empaquetar niveles y recursos.
+- CLI en Python de escritorio para validar niveles y recursos, convertir los JSON de desarrollo a FlatBuffers para distribución y generar el `.pak`.
 - Validación de referencias a recursos y errores descriptivos antes de generar código o paquetes.
 - (Post-MVP) Generador de código C++ para convertir los layouts de interfaz del juego en código que use la API Builder.
 ---
@@ -215,20 +216,20 @@ Se usará para crear y guardar niveles, animaciones básicas y las interfaces de
 - Diálogos y lógica del juego escritos directamente en C++.
 
 **Formato editable durante el desarrollo:**
-- Los niveles y las animaciones se guardarán en archivos JSON, con una versión de esquema definida.
+- Los niveles y las animaciones se guardarán en archivos JSON editables, con una versión de esquema definida. Estos son los formatos de trabajo durante el desarrollo.
 - Los archivos multimedia se conservarán en su formato original dentro del proyecto.
-- Los esquemas FlatBuffers (`.fbs`) definirán el formato binario de los niveles y las animaciones.
 - (Post-MVP) El editor será la fuente editable de los layouts de interfaz del juego. El generador de código los convertirá en C++ que use la API Builder del engine.
 - Los diálogos y la lógica del juego se mantendrán en archivos C++.
 
-**Formato utilizado al ejecutar el juego:**
-- El empaquetador validará los JSON de niveles y animaciones y los convertirá a buffers binarios FlatBuffers usando los esquemas `.fbs`.
+**Formato utilizado para distribuir y ejecutar el juego:**
+- Al preparar una distribución, el empaquetador validará los JSON de niveles y animaciones y los convertirá a buffers binarios FlatBuffers usando los esquemas `.fbs`.
+- Los esquemas FlatBuffers (`.fbs`) definirán el formato binario de distribución de los niveles y las animaciones.
 - El runtime C++ utilizará el código de acceso generado por `flatc` y verificará cada buffer FlatBuffers antes de leerlo.
 - Los buffers de niveles y animaciones, junto con los recursos multimedia, se incluirán como entradas de un archivo `.pak` versionado.
 - (Post-MVP) El código C++ generado a partir de los layouts de interfaz del juego se compilará con el juego; no se incluirá como layout dentro del `.pak`.
 
 **¿Se necesita agrupar o comprimir recursos?**
-- Sí. El empaquetador agrupará los recursos y los buffers FlatBuffers en un archivo `.pak`.
+- Sí. Para distribuir el juego, el empaquetador agrupará los recursos y los buffers FlatBuffers generados desde los JSON de desarrollo en un archivo `.pak`.
 - No se aplicará compresión adicional a PNG, JPG ni a otros formatos que ya estén comprimidos.
 - Se podrá comprimir otros datos si las pruebas muestran una reducción útil del tamaño. El índice registrará el método de compresión y los tamaños comprimido y original de cada entrada.
 - El empaquetador validará las referencias a recursos, los offsets y los tamaños antes de generar el paquete.
@@ -255,11 +256,11 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 | GPU Linux de referencia | AMD Radeon Graphics, dispositivo `1002:15e7`, con Linux Mint 22.2 Xfce; pantalla de 1366 × 768 a 60 Hz bajo X11 | Define el hardware y el entorno principal para probar el runtime Linux | Otras GPU y entornos de pantalla | Hardware de prueba identificado; capacidad Vulkan por verificar |
 | API gráfica en Linux | Vulkan; comprobar la versión y el controlador disponibles en la GPU de referencia | Se busca compartir la API gráfica con Android y usar un backend explícito | OpenGL; otro backend | Decidido; comprobar soporte y presentación de superficies en Linux |
 | API gráfica en Android | Vulkan 1.1 o superior en arm64-v8a; consultar las capacidades del dispositivo en tiempo de ejecución | El Moto G34 5G con Snapdragon 695/Adreno 619 admite Vulkan 1.1 | Vulkan 1.0; otro backend | Decidido para el dispositivo de prueba |
-| Android SDK | `minSdkVersion` 35, `targetSdkVersion` 36 y `compileSdkVersion` 36 o superior | Permite instalar en Android 15 o superior y cumplir el requisito actual de Google Play para nuevas apps y actualizaciones | Revisar cuando cambien los requisitos de Google Play | Decidido para el MVP |
-| Ventanas y entrada | La lógica del juego y el editor usan únicamente la API pública del núcleo para ventanas y entrada. El núcleo selecciona el backend de plataforma: GLFW3 en Linux y las APIs nativas de Android en Android. | Evita que el juego y el editor dependan directamente de una librería o sistema operativo, y permite cambiar los backends sin modificar su lógica. | SDL3 como backend común; otros backends por plataforma | Decidido como enfoque; validar la implementación de ambos backends |
+| Android SDK | `minSdkVersion` 36, `targetSdkVersion` 36 y `compileSdkVersion` 36 o superior | Permite instalar en Android 16 o superior y cumplir el requisito actual de Google Play para nuevas apps y actualizaciones | Revisar cuando cambien los requisitos de Google Play | Decidido para el MVP |
+| Ventanas y entrada | La lógica del juego y el editor usan únicamente la API pública del núcleo para ventanas y entrada. El runtime selecciona el backend de plataforma: GLFW3 en Linux y las APIs nativas de Android en Android. El editor se ejecutará como herramienta de escritorio en Linux para el MVP. | Evita que el juego y el editor dependan directamente de una librería o sistema operativo, y permite cambiar los backends sin modificar su lógica. | SDL3 como backend común; otros backends por plataforma | Decidido como enfoque; validar la implementación de ambos backends |
 | Audio | miniaudio para reproducción básica de WAV, efectos y música | Mantiene acotado el alcance de audio del MVP | OpenAL; audio de SDL3 | Investigar mediante un prototipo en Linux y Android |
 | Física y colisiones | Box2D detrás de una interfaz propia del engine: un único mundo por nivel (X = horizontal, Y = vertical para salto y gravedad), con el carril como metadato del cuerpo y filtrado por máscara de carril (lane mask); el raycasting se añadirá después del MVP | Evita que la lógica del juego dependa directamente de Box2D y permite implementar las consultas necesarias para combate y visión | Un mundo Box2D por carril; física propia acotada; otra biblioteca 2D | Decidido: un solo mundo + filtros de carril; validar la integración de los carriles de profundidad |
-| Datos de niveles y animaciones | JSON editable convertido a buffers FlatBuffers mediante esquemas `.fbs` | Evita parsear JSON durante la ejecución y permite definir un formato binario versionado | Cargar JSON directamente; formato binario propio | Decidido |
+| Datos de niveles y animaciones | JSON editable durante el desarrollo; al preparar una distribución, conversión a buffers FlatBuffers mediante esquemas `.fbs` | Evita parsear JSON durante la ejecución distribuida y permite definir un formato binario versionado | Parsear JSON en el runtime; formato binario propio | Decidido |
 | Interfaz de usuario | API Builder propia (sin macros) para construir la interfaz responsive del editor; el diseño visual de interfaces de juego y su generador de C++ quedan para una fase posterior | Permite construir la interfaz del editor y adaptar su distribución a distintas pantallas; el generador de layouts de juego se añadirá después del MVP | Layouts escritos a mano en C++; sistema inspirado en Clay sin generación de código | Decidido para el MVP; generador de C++ para layouts de juego en fase posterior |
 | Diálogos y lógica del juego | Se implementan directamente en C++ | No se editarán visualmente en el MVP | Editor visual de diálogos; archivos de datos interpretados en runtime | Decidido para el MVP |
 | Contenedor de recursos | Archivo `.pak` versionado con recursos y buffers FlatBuffers; índice cifrado con AES-128 para ocultar la estructura del paquete | Agrupa los datos del runtime y oculta la información del índice | Archivos sueltos; cifrar todo el paquete | Decidido el objetivo (AES-128-GCM); gestión de clave y nonce por investigar |
@@ -276,7 +277,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 | Estabilidad | Imprescindible | Ejecutar la escena durante 30 minutos y repetir cargas, cierres, pausas y reanudaciones en Android. No debe haber cierres inesperados ni errores de Vulkan causados por el núcleo. |
 | Tamaño de la aplicación | Deseable | Registrar el tamaño del APK y del `.pak` en una compilación de distribución. Fijar un límite cuando haya una muestra representativa de los recursos del juego. |
 | Facilidad para añadir contenido | Imprescindible | Crear un nivel y una animación básicos desde el editor, empaquetarlos y cargarlos sin modificar el código del núcleo. |
-| Compatibilidad entre Linux y Android | Imprescindible | Compilar y ejecutar la misma prueba funcional en Linux Mint 22.2 x86_64 y en el Moto G34 5G con Android 15 o superior, verificando Vulkan 1.1 en el dispositivo. |
+| Compatibilidad entre Linux y Android | Imprescindible | Compilar y ejecutar la misma prueba funcional del runtime en Linux Mint 22.2 x86_64 y en el Moto G34 5G con Android 16 (API 36) o superior, verificando Vulkan 1.1 en el dispositivo. El editor y el empaquetador se prueban como herramientas de escritorio en Linux. |
 | Facilidad de depuración | Imprescindible | En una compilación de desarrollo, registrar los errores de Vulkan causados por el núcleo. Simular la ausencia de un recurso y comprobar que el mensaje identifique el recurso y la operación fallida. |
 
 ---
@@ -285,7 +286,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 
 **Dispositivos y sistemas disponibles para probar:**
 - Linux Mint 22.2 Xfce (Zara), x86_64. GPU AMD Radeon Graphics (`1002:15e7`), pantalla de 1366 × 768 a 60 Hz y sesión X11.
-- Motorola Moto G34 5G, Android 16, arquitectura arm64-v8a. Versión mínima de Android prevista: 15 (API 35).
+- Motorola Moto G34 5G, Android 16 (API 36), arquitectura arm64-v8a. Coincide con la versión mínima prevista para el MVP.
 
 **Qué debe probarse en Linux:**
 - Compilar y ejecutar el editor y el runtime en Linux Mint 22.2.
@@ -295,7 +296,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 - Comprobar el renderizado y el layout del editor en la resolución nativa de Linux (1366 × 768).
 - Medir el rendimiento con una escena de referencia y una resolución objetivo definida para cada plataforma.
 
-**Qué debe probarse en Android 15+:**
+**Qué debe probarse en Android 16+:**
 - Instalar y ejecutar el APK arm64-v8a en el Moto G34 5G.
 - Consultar en tiempo de ejecución la versión de Vulkan y las capacidades que expone el driver.
 - Cargar y renderizar los recursos del `.pak`, reproducir audio WAV y probar la entrada táctil.
@@ -319,7 +320,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 
 **Problemas conocidos o riesgos:**
 - El reporte actual de la GPU Linux muestra OpenGL, pero no confirma la versión ni la disponibilidad de Vulkan, aunque, según el modelo de la CPU/GPU, la versión máxima esperada de Vulkan es 1.3. Verificarlo con `vulkaninfo --summary` y probar la presentación en X11.
-- El Moto G34 5G es el único dispositivo Android de prueba disponible y ejecuta Android 16; probarlo no demuestra compatibilidad con todos los dispositivos Android 15 o superiores, y el mínimo declarado (Android 15, API 35) no se valida en un dispositivo real con esa versión.
+- El Moto G34 5G es el único dispositivo Android de prueba disponible y ejecuta Android 16 (API 36), que coincide con el mínimo declarado. Probarlo no demuestra compatibilidad con otros dispositivos que ejecuten Android 16 o superior.
 - Falta definir la generación, el almacenamiento y la protección de la clave y del nonce para el índice del `.pak` (AES-128-GCM); las pruebas de cifrado e integridad dependerán de esa decisión.
 - El alcance del MVP (motor Vulkan multiplataforma, editor visual, empaquetador con FlatBuffers y cifrado) es amplio para unas 25 horas/semana hasta el 1 de diciembre de 2026; conviene definir un corte mínimo entregable por si el tiempo no alcanza.
 
@@ -332,8 +333,8 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 | 1. Investigación y decisiones técnicas | Decisiones documentadas sobre Vulkan en Linux y Android, capa de plataforma, audio, Box2D, FlatBuffers y cifrado del índice del `.pak`. | Hay pruebas o documentación para las decisiones principales. Se verifica Vulkan en Linux con `vulkaninfo --summary` y en el Moto G34 5G. |
 | 2. Prototipo técnico multiplataforma | Aplicaciones de prueba para Linux y Android que crean la superficie Vulkan, reciben entrada y renderizan un sprite. | El prototipo funciona en Linux Mint 22.2 x86_64 y se instala y ejecuta en el Moto G34 5G con Android 16. En Android se prueba también la pausa y reanudación. |
 | 3. Funciones esenciales del núcleo | API pública del núcleo, backend de plataforma, renderizado 2D, entrada, audio básico, colisiones, animación por fotogramas y diagnóstico de Vulkan. | El runtime carga y muestra una escena de prueba; reproduce audio WAV; y puede cerrarse o reanudarse sin errores atribuibles al núcleo. |
-| 4. Editor de niveles y animaciones | Editor visual para crear, guardar y cargar niveles y animaciones. | Se pueden editar y guardar los niveles y las animaciones, y reabrirlos sin pérdida de datos. |
-| 5. Empaquetador y formatos de ejecución | CLI en Python que valida los datos, convierte niveles y animaciones JSON a FlatBuffers y crea el `.pak` con el índice cifrado. | El runtime valida y abre el índice, carga los recursos y lee los buffers FlatBuffers. El empaquetador rechaza referencias ausentes y archivos inválidos. |
+| 4. Editor de niveles y animaciones | Editor visual de escritorio para crear, guardar y cargar niveles y animaciones en JSON durante el desarrollo. | Se pueden editar y guardar los niveles y las animaciones, y reabrirlos sin pérdida de datos. |
+| 5. Empaquetador y formatos de ejecución | CLI de escritorio en Python que valida los datos, convierte niveles y animaciones JSON a FlatBuffers para distribución y crea el `.pak` con el índice cifrado. | El runtime valida y abre el índice, carga los recursos y lee los buffers FlatBuffers. El empaquetador rechaza referencias ausentes y archivos inválidos. |
 | 6. Prueba con contenido del juego | Nivel offline corto con tres personajes provisionales, cambio entre personajes, carriles de profundidad con conexiones definidas, un enemigo, un ataque y un objetivo sencillo. | El contenido se crea con las herramientas previstas, se empaqueta y se ejecuta en Linux y Android. Esta prueba no requiere implementar todo el inventario, el sigilo ni el multijugador. |
 | 7. Validación y entrega del MVP | Versiones ejecutables para Linux y Android, junto con instrucciones para probarlas. | Se completan las pruebas definidas para ambos dispositivos, se revisan los errores de Vulkan y se verifica el cierre limpio del runtime. |
 
@@ -355,7 +356,7 @@ El editor permite crear el contenido básico de la prueba; el empaquetador produ
 ### Suposiciones actuales
 - El PC de pruebas usa Linux Mint 22.2 Xfce x86_64 y un AMD Ryzen 3 7330U con Radeon Graphics integrada (dispositivo PCI `1002:15e7`). Vulkan en Linux está pendiente de verificación.
 - La API pública del núcleo ocultará los detalles de plataforma. La lógica del juego y el editor no dependerán directamente de GLFW ni de las APIs nativas de Android.
-- El editor guardará niveles y animaciones en formatos editables; estos se convertirán a FlatBuffers. Los layouts de interfaz del juego y su generador de C++ quedan para una fase posterior.
+- El editor guardará niveles y animaciones en JSON durante el desarrollo; al preparar una distribución, el empaquetador los convertirá a FlatBuffers. Los layouts de interfaz del juego y su generador de C++ quedan para una fase posterior.
 - El empaquetador incluirá los recursos y los datos FlatBuffers en un `.pak`. Se cifrará el índice para ocultar la estructura del paquete, pero no los recursos multimedia.
 - Los diálogos y la lógica del juego se implementarán directamente en C++ durante el MVP.
 
