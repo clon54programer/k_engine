@@ -20,6 +20,9 @@ compilación difíciles de crear y depurar.
 Yo, un usuario intermedio de C++ y entusiasta de la programación,
 con 3 años escribiendo a diario C++.
 
+**Terminología:**  
+En este documento, «núcleo» y «runtime» se usan como sinónimos, y «motor» y «engine» se usan como sinónimos.
+
 ---
 
 ## 2. Objetivos del proyecto
@@ -245,7 +248,7 @@ Los datos de los recursos no se cifrarán: esta medida oculta el índice, pero n
 
 | Tema | Decisión actual | Motivo | Alternativas consideradas | Estado |
 |---|---|---|---|---|
-| Lenguaje y estándar | C++17 para el núcleo, el editor y el runtime | Es el estándar elegido para compartir código entre Linux y Android | Otros estándares de C++ | Decidido |
+| Lenguaje y estándar | C++17 para el núcleo (runtime) y el editor | Es el estándar elegido para compartir código entre Linux y Android | Otros estándares de C++ | Decidido |
 | GPU Linux de referencia | AMD Radeon Graphics, dispositivo `1002:15e7`, con Linux Mint 22.2 Xfce; pantalla de 1366 × 768 a 60 Hz bajo X11 | Define el hardware y el entorno principal para probar el runtime Linux | Otras GPU y entornos de pantalla | Hardware de prueba identificado; capacidad Vulkan por verificar |
 | API gráfica en Linux | Vulkan; comprobar la versión y el controlador disponibles en la GPU de referencia | Se busca compartir la API gráfica con Android y usar un backend explícito | OpenGL; otro backend | Decidido; comprobar soporte y presentación de superficies en Linux |
 | API gráfica en Android | Vulkan 1.1 o superior en arm64-v8a; consultar las capacidades del dispositivo en tiempo de ejecución | El Moto G34 5G con Snapdragon 695/Adreno 619 admite Vulkan 1.1 | Vulkan 1.0; otro backend | Decidido para el dispositivo de prueba |
