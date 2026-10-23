@@ -171,7 +171,7 @@ La física de juego, el combate, los carriles de profundidad, los personajes int
 | Física y colisiones | Fuera del MVP del engine; necesaria para una futura prueba de combate | La primera prueba técnica no requiere física. Si una vertical slice posterior incluye movimiento y ataques, añadir colisiones y detección de impactos; evaluar Box2D detrás de una interfaz del engine. Raycasting, visión y sigilo quedan para etapas posteriores. |
 | Animaciones | Necesario: animación por fotogramas en el MVP; Deseable: animación esquelética en una fase posterior | El MVP permite definir secuencias desde spritesheets y previsualizarlas. En una fase posterior, añadir un sistema 2D de huesos jerárquicos, slots asociados a huesos y attachments —por ejemplo, sprites que se puedan cambiar—, con clips que animen transformaciones y cambios de attachment. |
 | Interfaz de usuario | Necesaria para el editor Linux | Implementar la API Builder propia sin macros y solo los componentes que necesita el editor: paneles, botones, paleta, cuadrícula y controles de animación. Adaptar el editor a tamaños de ventana de escritorio; el diseño responsive para dispositivos Android y las interfaces del juego se abordarán después. |
-| Carga de recursos | Necesario | Leer y validar recursos desde un contenedor versionado, incluyendo imágenes y datos de niveles. Informar errores descriptivos si faltan recursos o el contenedor no es compatible. |
+| Carga de recursos | Necesario | Leer y validar recursos bajo demanda desde un contenedor versionado, incluyendo imágenes y datos de niveles, sin cargar el `.pak` completo en memoria. Informar errores descriptivos si faltan recursos o el contenedor no es compatible. |
 | Carga de niveles | Necesario | Cargar un nivel 2D con tiles, capas y datos básicos de objetos. Los carriles de profundidad y sus conexiones se añadirán para una futura prueba del juego. |
 | Guardado de datos | Necesario | Guardar y cargar los proyectos editables del editor. El guardado de progreso, decisiones narrativas y recursos de campaña queda para una fase posterior. |
 | Red | Fuera del MVP | Mantener las acciones del juego separadas de la entrada física cuando se implemente gameplay. El paso de simulación, identificadores estables, prototipos de intercambio y partidas LAN se definirán en una fase posterior; no se exige determinismo ni comunicación entre instancias para el MVP. |
@@ -231,9 +231,11 @@ Sí. Será una herramienta de escritorio (en el MVP, para Linux) para crear y gu
 - La estructura será `[cabecera][tabla de contenidos][datos]`. La cabecera tendrá 16 bytes: firma mágica `KPAK` (4 bytes ASCII), versión mayor y menor (u16 cada una), cantidad de archivos (u32) y CRC-32/ISO-HDLC de la tabla (u32). La tabla empieza inmediatamente después de la cabecera.
 - Cada entrada de la tabla tendrá 40 bytes: ID estable (u64), tipo (u32 con valores enumerados por el formato), flags/reservado (u32, cero en v1), offset absoluto en bytes (u64), tamaño (u64), CRC-32/ISO-HDLC del recurso (u32) y reservado (u32, cero en v1). Los enteros se serializan en little-endian. Las entradas se ordenan por ID; el área de datos sigue a la tabla. El CRC de la tabla cubre únicamente los bytes de sus entradas.
 - Los datos de cada recurso comienzan en un offset múltiplo de 16 bytes. El empaquetador insertará padding de bytes cero para cumplirlo; el tamaño registrado corresponde solo a los bytes del recurso, no al padding. Los offsets son absolutos desde el inicio del archivo y el índice es legible, no cifrado.
+- El runtime abrirá el `.pak` y leerá los recursos bajo demanda usando los offsets del índice; no cargará el paquete completo en memoria. La lectura y comprobación CRC-32 de los datos puede hacerse por bloques. El índice se cargará o procesará por separado y tendrá un límite de memoria propio.
 - El runtime leerá los campos como bytes o mediante `memcpy` y conversión explícita de endianness; no convertirá offsets arbitrarios del archivo directamente en punteros a estructuras o enteros. La alineación de 16 bytes del paquete no sustituye los requisitos específicos de Vulkan: el runtime alineará por separado los offsets del buffer de staging según el dispositivo.
 - El empaquetador validará referencias, offsets, tamaños y sumas de comprobación antes de generar el paquete; escribirá a un archivo temporal y solo publicará el `.pak` final si termina correctamente.
-- Se rechazarán IDs duplicados, referencias ausentes, versiones no compatibles, flags/reservados distintos de cero, offsets no alineados, rangos solapados o fuera de los límites del archivo, CRC incorrectos y paquetes o datos truncados. El lector verificará límites y desbordamientos antes de asignar memoria.
+- Se rechazarán IDs duplicados, referencias ausentes, versiones no compatibles, flags/reservados distintos de cero, offsets no alineados, rangos solapados o fuera de los límites del archivo, CRC incorrectos y paquetes o datos truncados. Antes de cargar o recorrer el índice, el lector calculará su tamaño con aritmética comprobada y validará que quepa en el archivo y dentro del límite de memoria del índice.
+- No se fijará un límite global de tamaño del `.pak` por memoria: el runtime no carga todos sus datos a la vez. El tamaño total seguirá limitado por el sistema de archivos y las APIs de acceso; sí se definirán límites prácticos para el índice y para cada tipo de recurso.
 
 **¿Se necesita cifrar recursos?**
 No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al juego podría extraerse y los recursos permanecerían legibles, por lo que el beneficio no justifica el coste inicial. CRC-32/ISO-HDLC se utilizará únicamente para detectar corrupción accidental, no como protección criptográfica. El cifrado se reconsiderará después si existe una necesidad concreta.
@@ -262,7 +264,7 @@ No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al 
 | Datos de niveles y animaciones | JSON editable durante el desarrollo; al preparar una distribución, conversión a buffers FlatBuffers mediante esquemas `.fbs` | Evita parsear JSON durante la ejecución distribuida y permite definir un formato binario versionado | Parsear JSON en el runtime; formato binario propio | Decidido |
 | Interfaz de usuario | API Builder propia (sin macros) con los componentes mínimos para el editor de escritorio; la adaptación responsive a dispositivos y las interfaces de juego quedan para fases posteriores | Permite validar la API Builder en Linux sin implementar aún un sistema de UI multiplataforma completo | Layouts escritos a mano en C++; sistema inspirado en Clay sin generación de código | Builder mínimo para el MVP; UI responsive de juego posterior |
 | Diálogos y lógica del juego | Se implementan directamente en C++ | No se editarán visualmente en el MVP | Editor visual de diálogos; archivos de datos interpretados en runtime | Decidido para el MVP |
-| Contenedor de recursos | `.pak` v1 con cabecera `KPAK`, TOC de entradas fijas de 40 bytes, enteros little-endian, offsets absolutos y datos alineados a 16 bytes; sin compresión ni cifrado; CRC-32/ISO-HDLC | Mantiene simple y verificable el formato inicial; no ofrece protección criptográfica contra modificaciones maliciosas | Cifrar el índice o todo el paquete; comprimir entradas | Estructura v1 definida; fijar límites prácticos antes de implementar productor y lector |
+| Contenedor de recursos | `.pak` v1 con cabecera `KPAK`, TOC de entradas fijas de 40 bytes, enteros little-endian, offsets absolutos y datos alineados a 16 bytes; sin compresión ni cifrado; CRC-32/ISO-HDLC; lectura de recursos bajo demanda | Evita cargar el paquete completo en memoria y mantiene verificables sus entradas | Cifrar el índice o todo el paquete; comprimir entradas | Estructura v1 definida; fijar límite de memoria del índice y límites por tipo de recurso |
 
 ---
 
@@ -313,6 +315,7 @@ No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al 
 - Verificar que el empaquetador rechace recursos inexistentes, referencias inválidas y archivos de entrada corruptos.
 - Verificar la serialización y lectura de niveles y animaciones FlatBuffers, incluidos buffers truncados o inválidos.
 - Probar el lector del `.pak` con índices y offsets válidos e inválidos, IDs duplicados, offsets no alineados, tamaños fuera de límites y CRC incorrectos.
+- Verificar que abrir el `.pak` no lea todos sus datos y que solicitar un recurso lea solo su rango; validar también la comprobación CRC por bloques.
 - Comprobar que el núcleo pueda inicializarse, cargar una escena básica y cerrarse sin errores.
 
 **Problemas conocidos o riesgos:**
@@ -320,7 +323,7 @@ No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al 
 - La salida de `vulkaninfo` advierte que el ICD no exporta `vkGetPhysicalDeviceDisplayPropertiesKHR` ni `vkGetPhysicalDeviceDisplayPlanePropertiesKHR`. Esas funciones corresponden a presentación directa; la advertencia no demuestra que X11 falle, por lo que debe verificarse con el prototipo de ventana.
 - La lista de capas de `vulkaninfo` no incluye `VK_LAYER_KHRONOS_validation`. Instalarla y comprobar que el runtime la active antes de exigir pruebas con Validation Layers.
 - El Moto G34 5G es el único dispositivo Android disponible para la etapa posterior; probarlo no demostrará compatibilidad con todos los dispositivos Android 16 o superiores.
-- La estructura del `.pak` v1 está definida; antes de implementarla se fijarán límites prácticos para el tamaño total, el número de recursos y el tamaño de cada recurso. El MVP no incluirá cifrado ni compresión adicional.
+- El runtime leerá los recursos del `.pak` bajo demanda, sin cargar todo el archivo en memoria. Antes de implementarlo se fijará un límite de memoria para la tabla de contenidos y límites por tipo de recurso; no se impondrá un límite global del `.pak` basado en RAM. El MVP no incluirá cifrado ni compresión adicional.
 - La disponibilidad hasta el 1 de diciembre de 2026 es de 25 horas semanales más ocho jornadas completas adicionales en noviembre. La estimación de horas productivas y la reserva para imprevistos se detallan en el plan.
 
 ---
@@ -365,7 +368,7 @@ El runtime, el editor y el empaquetador funcionan en Linux Mint 22.2 x86_64; el 
 
 ### Preguntas que necesito resolver
 - ¿Puede el runtime crear una superficie X11 y presentar mediante swapchain en la GPU AMD RADV? `vulkaninfo` ya confirma la versión del dispositivo y el controlador.
-- ¿Qué límites prácticos de tamaño de paquete, número de recursos y tamaño por recurso se impondrán además de los límites representables por los campos `u32`/`u64`?
+- ¿Qué límite de memoria se impondrá a la tabla de contenidos, y qué tamaño máximo se permitirá para cada tipo de recurso según su forma de carga (por ejemplo, niveles FlatBuffers completos frente a audio transmitido por bloques en una etapa futura)? No se necesita un máximo global del `.pak` por memoria porque el runtime lee los recursos bajo demanda.
 - ¿Qué backend y estrategia de ciclo de vida se usarán para Android? Se resolverá durante la etapa posterior de esa plataforma.
 ### Decisiones que no necesito tomar todavía
 - Soporte para Windows, WebAssembly y otras distribuciones o dispositivos distintos de los objetivos de prueba del MVP.
