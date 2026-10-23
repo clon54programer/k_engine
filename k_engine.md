@@ -228,13 +228,15 @@ Sí. Será una herramienta de escritorio (en el MVP, para Linux) para crear y gu
 **¿Se necesita agrupar o comprimir recursos?**
 - Sí. Para distribuir el juego, el empaquetador agrupará los recursos y los buffers FlatBuffers generados desde los JSON de desarrollo en un archivo `.pak`.
 - La versión 1 no aplicará compresión adicional. Los recursos conservarán sus bytes originales; los niveles y las animaciones se almacenarán como buffers FlatBuffers.
-- El contrato del `.pak` especificará firma, versión, endianness, anchura de campos, unidades y origen de offsets, alineación de entradas, campos del índice y límites de tamaño.
-- Cada entrada tendrá como mínimo un ID estable, tipo, offset en bytes, tamaño y suma de comprobación CRC-32. Los offsets se medirán desde el inicio del archivo; el índice será legible y no cifrado.
+- La estructura será `[cabecera][tabla de contenidos][datos]`. La cabecera tendrá 16 bytes: firma mágica `KPAK` (4 bytes ASCII), versión mayor y menor (u16 cada una), cantidad de archivos (u32) y CRC-32/ISO-HDLC de la tabla (u32). La tabla empieza inmediatamente después de la cabecera.
+- Cada entrada de la tabla tendrá 40 bytes: ID estable (u64), tipo (u32 con valores enumerados por el formato), flags/reservado (u32, cero en v1), offset absoluto en bytes (u64), tamaño (u64), CRC-32/ISO-HDLC del recurso (u32) y reservado (u32, cero en v1). Los enteros se serializan en little-endian. Las entradas se ordenan por ID; el área de datos sigue a la tabla. El CRC de la tabla cubre únicamente los bytes de sus entradas.
+- Los datos de cada recurso comienzan en un offset múltiplo de 16 bytes. El empaquetador insertará padding de bytes cero para cumplirlo; el tamaño registrado corresponde solo a los bytes del recurso, no al padding. Los offsets son absolutos desde el inicio del archivo y el índice es legible, no cifrado.
+- El runtime leerá los campos como bytes o mediante `memcpy` y conversión explícita de endianness; no convertirá offsets arbitrarios del archivo directamente en punteros a estructuras o enteros. La alineación de 16 bytes del paquete no sustituye los requisitos específicos de Vulkan: el runtime alineará por separado los offsets del buffer de staging según el dispositivo.
 - El empaquetador validará referencias, offsets, tamaños y sumas de comprobación antes de generar el paquete; escribirá a un archivo temporal y solo publicará el `.pak` final si termina correctamente.
-- Se rechazarán IDs duplicados, referencias ausentes, versiones no compatibles, entradas fuera de los límites del archivo y paquetes o datos truncados.
+- Se rechazarán IDs duplicados, referencias ausentes, versiones no compatibles, flags/reservados distintos de cero, offsets no alineados, rangos solapados o fuera de los límites del archivo, CRC incorrectos y paquetes o datos truncados. El lector verificará límites y desbordamientos antes de asignar memoria.
 
 **¿Se necesita cifrar recursos?**
-No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al juego podría extraerse y los recursos permanecerían legibles, por lo que el beneficio no justifica el coste inicial. La suma CRC-32 se utilizará únicamente para detectar corrupción accidental, no como protección criptográfica. El cifrado se reconsiderará después si existe una necesidad concreta.
+No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al juego podría extraerse y los recursos permanecerían legibles, por lo que el beneficio no justifica el coste inicial. CRC-32/ISO-HDLC se utilizará únicamente para detectar corrupción accidental, no como protección criptográfica. El cifrado se reconsiderará después si existe una necesidad concreta.
 
 **Identificación de recursos:**
 - Cada recurso tendrá un ID estable asignado y guardado en los datos del proyecto.
@@ -250,8 +252,8 @@ No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al 
 | Tema | Decisión actual | Motivo | Alternativas consideradas | Estado |
 |---|---|---|---|---|
 | Lenguaje y estándar | C++17 para el núcleo (runtime) y el editor | Es el estándar elegido para compartir código entre Linux y Android | Otros estándares de C++ | Decidido |
-| GPU Linux de referencia | AMD Radeon Graphics, dispositivo `1002:15e7`, con Linux Mint 22.2 Xfce; pantalla de 1366 × 768 a 60 Hz bajo X11 | Define el hardware y el entorno principal para probar el runtime Linux | Otras GPU y entornos de pantalla | Hardware de prueba identificado; capacidad Vulkan por verificar |
-| API gráfica en Linux | Vulkan; comprobar la versión y el controlador disponibles en la GPU de referencia | Se busca compartir la API gráfica con Android y usar un backend explícito | OpenGL; otro backend | Decidido; comprobar soporte y presentación de superficies en Linux |
+| GPU Linux de referencia | AMD Radeon Graphics (Renoir), dispositivo `1002:15e7`, controlador RADV de Mesa 25.2.8, con Linux Mint 22.2 Xfce; pantalla de 1366 × 768 a 60 Hz bajo X11 | Define el hardware y el controlador de referencia para probar el runtime Linux | Otras GPU y entornos de pantalla | Identificados con `vulkaninfo --summary`; falta probar presentación en X11 |
+| API gráfica en Linux | Vulkan 1.3 como versión objetivo inicial de la aplicación. `vulkaninfo` informa versión de instancia 1.3.275 y API 1.4.318 para la GPU AMD. | La GPU soporta una versión superior a la necesaria; se elige 1.3 para alinearse con la versión informada por el loader y evitar depender de funciones 1.4 | Vulkan 1.4; OpenGL; otro backend | Versión y controlador identificados; falta comprobar superficie X11 y swapchain |
 | API gráfica en Android | Vulkan 1.1 o superior en arm64-v8a; consultar las capacidades del dispositivo en tiempo de ejecución | El Moto G34 5G con Snapdragon 695/Adreno 619 admite Vulkan 1.1 | Vulkan 1.0; otro backend | Decisión para la etapa Android; aún no implementada |
 | Android SDK | `minSdkVersion` 36, `targetSdkVersion` 36 y `compileSdkVersion` 36 o superior | Define el objetivo de compatibilidad de la etapa Android | Revisar cuando cambien los requisitos de Google Play | Pendiente de implementar después del MVP Linux |
 | Ventanas y entrada | Runtime Linux con GLFW3 y una API del engine que mantenga la lógica separada de la biblioteca de ventanas y de los eventos físicos. El backend Android nativo se añadirá en su etapa. | Reduce dependencias de plataforma en el juego sin anticipar la implementación de todos los backends | SDL3 como backend común; otros backends por plataforma | Linux para el MVP; Android posterior |
@@ -260,7 +262,7 @@ No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al 
 | Datos de niveles y animaciones | JSON editable durante el desarrollo; al preparar una distribución, conversión a buffers FlatBuffers mediante esquemas `.fbs` | Evita parsear JSON durante la ejecución distribuida y permite definir un formato binario versionado | Parsear JSON en el runtime; formato binario propio | Decidido |
 | Interfaz de usuario | API Builder propia (sin macros) con los componentes mínimos para el editor de escritorio; la adaptación responsive a dispositivos y las interfaces de juego quedan para fases posteriores | Permite validar la API Builder en Linux sin implementar aún un sistema de UI multiplataforma completo | Layouts escritos a mano en C++; sistema inspirado en Clay sin generación de código | Builder mínimo para el MVP; UI responsive de juego posterior |
 | Diálogos y lógica del juego | Se implementan directamente en C++ | No se editarán visualmente en el MVP | Editor visual de diálogos; archivos de datos interpretados en runtime | Decidido para el MVP |
-| Contenedor de recursos | `.pak` versionado con índice legible, recursos sin compresión adicional y datos FlatBuffers; CRC-32 para detectar corrupción accidental | Mantiene simple y verificable el formato inicial; no ofrece cifrado ni protección contra modificaciones maliciosas | Cifrar el índice o todo el paquete; comprimir entradas | Decidido para v1; especificar el layout binario antes de implementar productor y lector |
+| Contenedor de recursos | `.pak` v1 con cabecera `KPAK`, TOC de entradas fijas de 40 bytes, enteros little-endian, offsets absolutos y datos alineados a 16 bytes; sin compresión ni cifrado; CRC-32/ISO-HDLC | Mantiene simple y verificable el formato inicial; no ofrece protección criptográfica contra modificaciones maliciosas | Cifrar el índice o todo el paquete; comprimir entradas | Estructura v1 definida; fijar límites prácticos antes de implementar productor y lector |
 
 ---
 
@@ -304,19 +306,21 @@ No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al 
 - Crear y guardar un nivel y una animación en el editor; volver a abrirlos y comprobar que conservan sus datos.
 - (Post-MVP) Generar el código C++ de una interfaz de juego, compilarlo e inspeccionar su layout en distintos tamaños de ventana.
 - Empaquetar el contenido, cargarlo desde el runtime y confirmar que el índice permite localizar los recursos.
-- Comprobar que offsets, tamaños y CRC-32 de los recursos del paquete se validen correctamente.
+- Comprobar que el CRC-32/ISO-HDLC de la tabla y los recursos, los tamaños y la alineación de 16 bytes se validen correctamente.
 - Comprobar los mensajes del núcleo cuando Vulkan no está disponible o falta un recurso.
 
 **Pruebas automatizadas necesarias:**
 - Verificar que el empaquetador rechace recursos inexistentes, referencias inválidas y archivos de entrada corruptos.
 - Verificar la serialización y lectura de niveles y animaciones FlatBuffers, incluidos buffers truncados o inválidos.
-- Probar el lector del `.pak` con índices y offsets válidos e inválidos, IDs duplicados, tamaños fuera de límites y checksums incorrectos.
+- Probar el lector del `.pak` con índices y offsets válidos e inválidos, IDs duplicados, offsets no alineados, tamaños fuera de límites y CRC incorrectos.
 - Comprobar que el núcleo pueda inicializarse, cargar una escena básica y cerrarse sin errores.
 
 **Problemas conocidos o riesgos:**
-- El reporte actual de la GPU Linux muestra OpenGL, pero no confirma la versión ni la disponibilidad de Vulkan, aunque, según el modelo de la CPU/GPU, la versión máxima esperada de Vulkan es 1.3. Verificarlo con `vulkaninfo --summary` y probar la presentación en X11.
+- `vulkaninfo --summary` confirma la GPU AMD Radeon Graphics (Renoir) con RADV de Mesa 25.2.8, API Vulkan de dispositivo 1.4.318 y versión de instancia/loader 1.3.275. También enumera `llvmpipe` como dispositivo de software, que no será el objetivo de rendimiento. Se enumeran extensiones de superficie Xlib y XCB, pero aún falta comprobar que el runtime pueda crear una superficie X11 y presentar mediante swapchain.
+- La salida de `vulkaninfo` advierte que el ICD no exporta `vkGetPhysicalDeviceDisplayPropertiesKHR` ni `vkGetPhysicalDeviceDisplayPlanePropertiesKHR`. Esas funciones corresponden a presentación directa; la advertencia no demuestra que X11 falle, por lo que debe verificarse con el prototipo de ventana.
+- La lista de capas de `vulkaninfo` no incluye `VK_LAYER_KHRONOS_validation`. Instalarla y comprobar que el runtime la active antes de exigir pruebas con Validation Layers.
 - El Moto G34 5G es el único dispositivo Android disponible para la etapa posterior; probarlo no demostrará compatibilidad con todos los dispositivos Android 16 o superiores.
-- El formato binario del `.pak` debe especificarse antes de implementar el empaquetador y el lector. El MVP no incluirá cifrado ni compresión adicional.
+- La estructura del `.pak` v1 está definida; antes de implementarla se fijarán límites prácticos para el tamaño total, el número de recursos y el tamaño de cada recurso. El MVP no incluirá cifrado ni compresión adicional.
 - La disponibilidad hasta el 1 de diciembre de 2026 es de 25 horas semanales más ocho jornadas completas adicionales en noviembre. La estimación de horas productivas y la reserva para imprevistos se detallan en el plan.
 
 ---
@@ -325,10 +329,10 @@ No en el MVP. El cifrado AES-GCM del índice se aplaza: la clave incorporada al 
 
 | Etapa | Resultado esperado | Criterio para darla por terminada |
 |---|---|---|
-| 1. Verificación técnica Linux | Confirmar que la GPU y el controlador de Linux permiten crear una superficie Vulkan y presentar una imagen. Definir el contrato mínimo del `.pak`. | `vulkaninfo --summary` identifica Vulkan y un prototipo mínimo presenta una imagen en X11. El formato del `.pak` queda documentado antes de implementar el lector y el escritor. |
+| 1. Verificación técnica Linux | Confirmar que la GPU y el controlador de Linux permiten crear una superficie Vulkan y presentar una imagen. Instalar Validation Layers y definir el contrato del `.pak`. | Un prototipo mínimo crea una superficie X11 y presenta una imagen en la GPU AMD; el runtime activa `VK_LAYER_KHRONOS_validation`. El formato del `.pak` queda documentado antes de implementar lector y escritor. |
 | 2. Runtime Linux mínimo | Ventana, entrada, renderizado 2D, carga del `.pak` y cierre limpio; sin física ni audio como requisitos del MVP. | El runtime carga un paquete de prueba, muestra un sprite y responde a una entrada básica en Linux Mint 22.2. |
 | 3. Editor de niveles y animaciones | Editor de escritorio con cuadrícula, capas básicas, clips por fotogramas y persistencia JSON. | Se puede crear, guardar, cerrar, reabrir y verificar un nivel y una animación sin pérdida de datos. |
-| 4. Empaquetador y formatos de distribución | CLI de escritorio que valida los JSON, los convierte a FlatBuffers y crea un `.pak` v1 con índice legible, sin compresión adicional ni cifrado. | El runtime lee el paquete generado; la CLI rechaza referencias ausentes y datos inválidos; las pruebas cubren offsets, tamaños y CRC-32. |
+| 4. Empaquetador y formatos de distribución | CLI de escritorio que valida los JSON, los convierte a FlatBuffers y crea un `.pak` v1 con índice legible, sin compresión adicional ni cifrado. | El runtime lee el paquete generado; la CLI rechaza referencias ausentes y datos inválidos; las pruebas cubren offsets, alineación de 16 bytes, tamaños y CRC-32/ISO-HDLC. |
 | 5. Integración de extremo a extremo | Nivel técnico pequeño creado con las herramientas previstas y cargado por el runtime Linux. | Se completa el flujo editor → JSON → FlatBuffers/`.pak` → runtime, con pruebas de rendimiento, estabilidad y cierre limpio. |
 | 6. Validación y entrega del MVP Linux | Runtime, editor y empaquetador ejecutables en Linux, más instrucciones de prueba. | Se completan los criterios de aceptación de la sección 10 en el equipo Linux objetivo. |
 | 7. Runtime Android | Portar el runtime y validar Vulkan, entrada táctil y ciclo de vida en Android 16/API 36 o superior. | Se instala y ejecuta en el Moto G34 5G, carga el mismo formato `.pak` y supera las pruebas de pausa, reanudación y recreación de superficie. |
@@ -353,15 +357,15 @@ El runtime, el editor y el empaquetador funcionan en Linux Mint 22.2 x86_64; el 
 ## 13. Suposiciones y preguntas abiertas
 
 ### Suposiciones actuales
-- El PC de pruebas usa Linux Mint 22.2 Xfce x86_64 y un AMD Ryzen 3 7330U con Radeon Graphics integrada (dispositivo PCI `1002:15e7`). Vulkan en Linux está pendiente de verificación.
+- El PC de pruebas usa Linux Mint 22.2 Xfce x86_64 y un AMD Ryzen 3 7330U con Radeon Graphics integrada (dispositivo PCI `1002:15e7`). `vulkaninfo --summary` identifica RADV de Mesa 25.2.8; la presentación en una superficie X11 sigue pendiente de prueba.
 - El runtime Linux usará GLFW detrás de una API del engine. La lógica del juego no dependerá directamente de GLFW; el backend Android nativo se implementará después del MVP Linux.
 - El editor guardará niveles y animaciones en JSON durante el desarrollo; al preparar una distribución, el empaquetador los convertirá a FlatBuffers. Los layouts de interfaz del juego y su generador de C++ quedan para una fase posterior.
-- El empaquetador incluirá recursos y datos FlatBuffers en un `.pak` con índice legible, sin cifrado ni compresión adicional en v1. El contrato binario se documentará antes de implementar el empaquetador y el lector.
+- El empaquetador incluirá recursos y datos FlatBuffers en un `.pak` v1 con índice legible, offsets de datos alineados a 16 bytes, sin cifrado ni compresión adicional.
 - Los diálogos y la lógica del juego se implementarán directamente en C++ durante el MVP.
 
 ### Preguntas que necesito resolver
-- ¿Qué versión de Vulkan y qué controlador están disponibles realmente en la GPU Linux? El reporte actual confirma OpenGL, pero no Vulkan.
-- ¿Cuál será el layout binario exacto del `.pak` v1 (anchuras de campos, endianness, alineación y límites)? Debe quedar documentado antes de implementar el empaquetador y el lector.
+- ¿Puede el runtime crear una superficie X11 y presentar mediante swapchain en la GPU AMD RADV? `vulkaninfo` ya confirma la versión del dispositivo y el controlador.
+- ¿Qué límites prácticos de tamaño de paquete, número de recursos y tamaño por recurso se impondrán además de los límites representables por los campos `u32`/`u64`?
 - ¿Qué backend y estrategia de ciclo de vida se usarán para Android? Se resolverá durante la etapa posterior de esa plataforma.
 ### Decisiones que no necesito tomar todavía
 - Soporte para Windows, WebAssembly y otras distribuciones o dispositivos distintos de los objetivos de prueba del MVP.
