@@ -94,12 +94,17 @@ Estados permitidos: `PENDIENTE`, `EN CURSO`, `BLOQUEADA`, `COMPLETADA`.
 - **Estado:** PENDIENTE
 - **Estimación:** 8 h
 - **Dependencias:** ninguna
-- **Trabajo:**
-  - Documentar valores del enum de tipos de recurso del `.pak` v1.
-  - Fijar el límite de memoria del índice y los límites por tipo de recurso.
-  - Confirmar la versión del esquema FlatBuffers y cómo se genera/usa el código necesario para escribir y leer buffers.
-  - Configurar el entorno del SDK Vulkan para la terminal e IDE usados en desarrollo.
-- **Finaliza cuando:** contrato del `.pak` y esquema quedan versionados/documentados; los comandos de herramientas están registrados; el proyecto compila con C++17 y CMake en Linux.
+- **Desglose estimado:** entorno 1 h; dependencias/submodules 1,5 h; contrato `.pak` 2 h; prueba FlatBuffers Python/C++ 1,5 h; build CMake mínimo 2 h.
+- **Trabajo, en este orden:**
+  1. **Auditar el entorno (1 h):** registrar versiones de GCC, CMake, Python, Vulkan SDK, loader y capa de validación. Cargar `setup-env.sh` del SDK en terminal e IDE. No instalar GLFW ni FlatBuffers globalmente.
+  2. **Cerrar dependencias y submodules (1,5 h):** fijar los commits/tags de GLFW y FlatBuffers bajo `third_party/`; documentar cómo se compilan desde CMake. Decidir el parser JSON y el decoder PNG como submodules, no como paquetes globales.
+  3. **Cerrar el contrato del `.pak` (2 h):** asignar valores al enum de tipos; fijar límites de memoria de la TOC y límites por tipo; conservar las reglas v1 ya definidas de little-endian, CRC-32/ISO-HDLC, offsets absolutos y alineación de payloads de 16 bytes.
+  4. **Probar FlatBuffers (1,5 h):** compilar `flatc` desde el submodule y generar/verificar un buffer mínimo desde Python y C++. Usar `flatc` y runtimes de Python/C++ del mismo commit o versión compatible.
+  5. **Verificar el build mínimo (2 h):** configurar C++17/CMake; compilar GLFW desde su submodule y enlazar una aplicación mínima con el Vulkan SDK. Esta prueba verifica el build, no implementa la superficie/swapchain de T1.
+- **Propuestas de límites para confirmar durante T0; no son valores aprobados todavía:** TOC de hasta 4 MiB (máximo derivado de 104 857 entradas de 40 bytes); buffers FlatBuffers de hasta 64 MiB por recurso; PNG hasta 4096 × 4096 y 64 MiB de memoria decodificada.
+- **Propuesta de dependencias C++ pendiente de confirmar:** `nlohmann/json` para JSON y `stb_image` para PNG, ambos como submodules. CRC-32 puede implementarse en el proyecto para evitar una biblioteca global adicional.
+- **Finaliza cuando:** contrato del `.pak`, tipos y límites quedan versionados/documentados; dependencias tienen versiones fijadas como submodules; el ejemplo FlatBuffers Python/C++ funciona; el entorno del SDK está configurado; y el proyecto C++17/CMake compila en Linux sin GLFW/FlatBuffers instalados globalmente.
+- **No incluye:** crear ventana, superficie X11, swapchain ni presentar frames; esos trabajos pertenecen a T1.
 
 ### T1 — Prototipo técnico Vulkan Linux
 
