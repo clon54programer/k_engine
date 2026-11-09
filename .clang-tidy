@@ -34,5 +34,5 @@ CheckOptions:
   - key: readability-identifier-naming.ConstantCase
     value: UPPER_CASE
 
-HeaderFilterRegex: '^(include|src|tests?|runtime|editor)/.*'
+HeaderFilterRegex: '^(engine|editor|packer)/.*'
 FormatStyle: file
