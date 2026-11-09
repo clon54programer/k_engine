@@ -1,1 +1,23 @@
 docs/plantilla_esbozo_game_engine_mvp.md
+
+# Artefactos de compilación y pruebas
+build/
+build-*/
+cmake-build-*/
+out/
+compile_commands.json
+.ninja_*
+.cache/
+
+# Entorno virtual de Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Archivos temporales
+*.log
+*.tmp
+*.swp
+*~

@@ -212,6 +212,56 @@
       "action": "edit",
       "resource": "*conftest.py",
       "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.gitignore",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.gitattributes",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.editorconfig",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.clang-format",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.clang-tidy",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.dockerignore",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git tag *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git tag",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "git tag -l *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "git tag --list *",
+      "effect": "allow"
     }
   ],
   "policies": [
@@ -464,12 +514,135 @@
       "action": "tool.use",
       "resource": "shell:git tag -d *",
       "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag -f *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag --annotate *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag --sign *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag --delete *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag --force *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag -m *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag --message *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag -F *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag --file *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag -u *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag --local-user *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git worktree add *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git worktree remove *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git worktree move *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git worktree prune *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git worktree lock *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git worktree unlock *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git worktree repair *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git submodule deinit *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git submodule foreach *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git submodule sync *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git submodule absorbgitdirs *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git remote prune *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git update-ref *",
+      "effect": "deny"
     }
   ],
   "watcher": {
     "ignore": [
       "build/**",
       "build-*/**",
+      "cmake-build-*/**",
+      "out/**",
+      "compile_commands.json",
       ".venv/**",
       "__pycache__/**",
       "*.pyc",
