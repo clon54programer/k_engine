@@ -212,8 +212,9 @@ espera a que seleccione manualmente otro modelo.
 
 Usa estos modelos mediante selección manual cuando sea necesario:
 
-- Desarrollo principal (`build` y `build-deepseek`): `deepseek/deepseek-flash`.
-- Planificación y razonamiento (`plan` y `plan-deepseek`): `deepseek/deepseek-v4-pro`.
+- Desarrollo principal (`build`): `deepseek/deepseek-flash`.
+- Planificación y razonamiento (`plan`): `deepseek/deepseek-v4-pro`.
+- Planificación ligera (`plan-light`): `deepseek/deepseek-flash`.
 
 No cambies de modelo silenciosamente. Si el modelo actual alcanza un límite,
 notifica al usuario y espera a que seleccione otro modelo.
