@@ -1,0 +1,41 @@
+// Esquema FlatBuffers de distribución para animaciones de K_engine.
+// Versión de esquema: 1.
+
+namespace k_engine.schema;
+
+struct Vec2i {
+  x:int32;
+  y:int32;
+}
+
+struct Recti {
+  x:int32;
+  y:int32;
+  w:int32;
+  h:int32;
+}
+
+struct Frame {
+  x:uint;
+  y:uint;
+  w:uint;
+  h:uint;
+  duration_ms:uint;
+}
+
+table Animation {
+  schema_version:uint = 1;
+  id:uint64;
+  name:string;
+  image_id:uint64;
+  frame_width:uint;
+  frame_height:uint;
+  fps:uint = 8;
+  loop:bool = true;
+  pivot:Vec2i;
+  hitbox:Recti;
+  frames:[Frame];
+}
+
+root_type Animation;
+file_identifier "KANI";

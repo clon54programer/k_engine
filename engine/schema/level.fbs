@@ -1,0 +1,56 @@
+// Esquema FlatBuffers de distribución para niveles de K_engine.
+// Versión de esquema: 1.
+
+namespace k_engine.schema;
+
+enum LayerKind : ubyte {
+  tile = 0,
+  collision = 1
+}
+
+struct Grid {
+  tile_width:uint;
+  tile_height:uint;
+  columns:uint;
+  rows:uint;
+}
+
+table Tileset {
+  id:uint64;
+  image_id:uint64;
+  tile_width:uint;
+  tile_height:uint;
+  columns:uint;
+  rows:uint;
+}
+
+table Layer {
+  id:uint64;
+  name:string;
+  kind:LayerKind = tile;
+  visible:bool = true;
+  tileset_id:uint64;
+  tiles:[uint];
+}
+
+table Entity {
+  id:uint64;
+  image_id:uint64;
+  animation_id:uint64;
+  x:int32;
+  y:int32;
+  layer_id:uint64;
+}
+
+table Level {
+  schema_version:uint = 1;
+  id:uint64;
+  name:string;
+  grid:Grid;
+  tilesets:[Tileset];
+  layers:[Layer];
+  entities:[Entity];
+}
+
+root_type Level;
+file_identifier "KLVL";
