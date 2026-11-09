@@ -34,6 +34,7 @@ sudo apt install \
   libxinerama-dev \
   libxcursor-dev \
   libxi-dev \
+  libxext-dev \
   libxxf86vm-dev \
   python3 \
   python3-venv \
@@ -48,14 +49,15 @@ sudo apt install \
 | `pkg-config` | Recomendada | Descubrir bibliotecas del sistema cuando un paquete CMake no proporcione su configuración. |
 | Driver Mesa Vulkan (`mesa-vulkan-drivers`) | Requerida para la GPU AMD objetivo | Proporciona RADV para la AMD Radeon Graphics Renoir. Verificar que el dispositivo AMD se enumere y no usar `llvmpipe` como objetivo de rendimiento. |
 | Loader Vulkan del sistema (`libvulkan1`) | Requerido como runtime Vulkan del sistema; ya disponible en el entorno | Proporciona la interfaz entre la aplicación y el ICD instalado. No es una biblioteca del engine para convertir en submodule. El SDK ya aporta headers y herramientas de desarrollo. |
-| Headers/librerías de X11 y GLX | Requeridos para compilar GLFW con backend X11 | `libgl1-mesa-dev`, `libx11-dev`, `libxrandr-dev`, `libxinerama-dev`, `libxcursor-dev`, `libxi-dev` y `libxxf86vm-dev`. Son dependencias de integración con el sistema; GLFW se compila desde el submodule del proyecto. |
+| Headers/librerías de X11 y GLX | Requeridos para compilar GLFW 3.5.1 con backend X11 | `libgl1-mesa-dev`, `libx11-dev`, `libxrandr-dev`, `libxinerama-dev`, `libxcursor-dev`, `libxi-dev`, `libxext-dev` y `libxxf86vm-dev`. `libxext-dev` aporta `X11/extensions/shape.h`, que GLFW 3.5.1 exige. Son dependencias de integración con el sistema; GLFW se compila desde el submodule del proyecto. |
+| Dependencias Wayland (opcional) | No requeridas para el MVP X11 | Solo si se activa `GLFW_BUILD_WAYLAND=ON`: `libwayland-dev` y `libxkbcommon-dev`. El MVP compila con `GLFW_BUILD_WAYLAND=OFF`. |
 | Python 3, `venv` y `pip` | Requerida | Ejecutar la CLI empaquetadora en un entorno virtual local; no instalar paquetes Python del proyecto globalmente. |
 
-No instalar `libglfw3-dev`, `libvulkan-dev`, `vulkan-tools`, `flatbuffers-compiler` ni `libflatbuffers-dev` globalmente para este proyecto: GLFW y FlatBuffers serán submodules, y el Vulkan SDK ya aporta los headers y herramientas de desarrollo. `mesa-vulkan-drivers` y las bibliotecas/headers de X11 sí son componentes del sistema.
+No instalar `libglfw3-dev`, `libvulkan-dev`, `vulkan-tools`, `flatbuffers-compiler` ni `libflatbuffers-dev` globalmente para este proyecto: GLFW y FlatBuffers son submodules, y el Vulkan SDK ya aporta los headers y herramientas de desarrollo. `mesa-vulkan-drivers` y las bibliotecas/headers de X11 sí son componentes del sistema.
 
 ## 3. Bibliotecas de código como Git submodules
 
-Las dependencias de código se guardarán en `third_party/` como submodules fijados a un commit o tag conocido. Al incorporarlas al repositorio, inicializarlas con:
+Las dependencias de código se guardan en `third_party/` como submodules fijados a un commit o tag conocido. Al incorporarlas a un clon nuevo, inicializarlas con:
 
 ```bash
 git submodule update --init --recursive
@@ -63,10 +65,13 @@ git submodule update --init --recursive
 
 | Submodule | Estado | Uso/build |
 |---|---|---|
-| GLFW | Requerido | Ventana X11, input y creación de superficie Vulkan. Compilar como parte del build del proyecto; no enlazar a `libglfw3-dev` global. |
-| FlatBuffers | Requerido | Compilar `flatc` y usar su runtime C++ desde el submodule. Usar también el runtime Python del mismo submodule para que los buffers escritos por la CLI sean compatibles. |
-| Parser JSON C++ | Pendiente de decisión; candidato `nlohmann/json` | Editor: guardar y volver a cargar JSON. Incorporarlo como submodule cuando se apruebe la selección. |
-| Decodificador PNG | Pendiente de decisión; candidato `stb_image` | Editor/runtime: importar, previsualizar y cargar imágenes. Incorporarlo como submodule cuando se apruebe la selección. |
+| GLFW | Requerido; versión `3.5.1` fijada como submodule | Ventana X11, input y creación de superficie Vulkan. Compilar con `GLFW_BUILD_X11=ON`, `GLFW_BUILD_WAYLAND=OFF`, `GLFW_BUILD_EXAMPLES=OFF`, `GLFW_BUILD_TESTS=OFF`, `GLFW_BUILD_DOCS=OFF` y `GLFW_INSTALL=OFF`. Requiere CMake >= 3.16 y los headers X11 indicados arriba; no enlazar a `libglfw3-dev` global. |
+| FlatBuffers | Requerido; versión `v25.12.19` fijada como submodule | Compilar `flatc` y usar su runtime C++ desde el submodule. Usar también el runtime Python del mismo submodule/commit para que los buffers escritos por la CLI sean compatibles. Requiere CMake >= 3.8 y C++11. |
+| Parser JSON C++ | Requerido; `nlohmann/json` `v3.12.0` fijado como submodule | Editor: guardar y volver a cargar JSON. Header-only y C++11; el runtime de distribución no parsea JSON. |
+| Decodificador PNG | Requerido; `stb_image` 2.30 desde el submodule `stb` (commit `4e9b368...`) | Editor/runtime: importar, previsualizar y cargar imágenes. Definir `STB_IMAGE_IMPLEMENTATION` en un único archivo C++. |
+| Framework de pruebas C++ | Requerido para pruebas; `doctest` `v2.5.3` fijado como submodule | Pruebas del lector `.pak`, FlatBuffers y runtime. Header-only y C++11; enlazar `doctest::doctest`. |
+
+GLFW 3.5.1 activa Wayland por defecto en Linux. El MVP usa X11, así que hay que configurar `GLFW_BUILD_WAYLAND=OFF`; de lo contrario, CMake exige `libwayland-dev` y `libxkbcommon-dev`. `libxkbcommon-dev` ya está instalado, pero `libwayland-dev` no forma parte de las dependencias del MVP X11.
 
 No añadir dependencias de código descargadas automáticamente durante la configuración de CMake; usar los submodules fijados para que el build sea reproducible y funcione sin resolver versiones globales.
 
@@ -113,20 +118,20 @@ python -m pip install --upgrade pip
 | Runtime Python de FlatBuffers | Requerido; se importará desde el submodule FlatBuffers, no desde un paquete global de `pip` | Construir buffers FlatBuffers desde el empaquetador. Si hace falta registrarlo en el venv, instalarlo desde la ruta local del submodule y no desde PyPI sin fijar versión. |
 | `json` | Incluido en la biblioteca estándar | Leer y validar los JSON de desarrollo; no instalar por `pip`. |
 | `zlib` | Incluido en la biblioteca estándar de Python | Calcular CRC-32/ISO-HDLC incremental con `zlib.crc32`; no instalar por `pip`. |
-| `pytest` | Opcional, pendiente de elegir framework de pruebas | Automatizar pruebas de la CLI y del empaquetador. |
+| `pytest` | Opcional; el MVP usará `unittest` de la biblioteca estándar | Automatizar pruebas de la CLI y del empaquetador; no se instala para el MVP. |
 
 La versión del runtime Python y `flatc` debe proceder del mismo submodule/commit de FlatBuffers. No depender de una versión flotante de PyPI.
 
-## 6. Dependencias de código pendientes de selección
+## 6. Dependencias de código: estado de selección
 
-Estas dependencias son necesarias para las funciones descritas, pero las decisiones concretas aún deben cerrarse antes de instalarlas o añadirlas al build:
+Estas dependencias son necesarias para las funciones descritas. Las ya decididas están fijadas como submodules; solo queda cerrar la implementación de CRC-32 antes de usarla:
 
-| Necesidad | Estado | Opción candidata |
+| Necesidad | Estado | Uso o decisión |
 |---|---|---|
-| Leer/escribir JSON en el editor C++ | Pendiente de decisión | Candidato: `nlohmann/json` como submodule. El runtime de distribución no necesita JSON. |
-| Decodificar y previsualizar PNG en el editor/runtime | Pendiente de decisión | Candidato: `stb_image` como submodule. |
+| Leer/escribir JSON en el editor C++ | Decidido: `nlohmann/json` `v3.12.0` como submodule | Header-only; el runtime de distribución no necesita JSON. |
+| Decodificar y previsualizar PNG en el editor/runtime | Decidido: `stb_image` 2.30 desde `stb` | Definir `STB_IMAGE_IMPLEMENTATION` una sola vez y validar dimensiones/CRC en el packer. |
 | CRC-32/ISO-HDLC en C++ | Pendiente de decisión de implementación | Implementación pequeña en el proyecto o submodule de zlib; evitar enlazar una biblioteca global sin decisión explícita. |
-| Framework de pruebas C++ | Pendiente de decisión | Elegirlo e incorporarlo como submodule cuando se implementen las pruebas automatizadas del runtime/lector. |
+| Framework de pruebas C++ | Decidido: `doctest` `v2.5.3` como submodule | Header-only; integrarlo en CTest. |
 
 Estas decisiones no cambian el alcance del MVP; se deben cerrar antes de que las tareas dependientes queden bloqueadas.
 
