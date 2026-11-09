@@ -262,6 +262,46 @@
       "action": "shell",
       "resource": "git tag --list *",
       "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "rm *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "rmdir *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "dd *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "mkfs*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "truncate *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "shred *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "chmod *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "chown *",
+      "effect": "ask"
     }
   ],
   "policies": [
