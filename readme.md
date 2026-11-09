@@ -4,10 +4,21 @@
 
 K_engine es un engine 2D personal escrito principalmente en C++17. Busca combinar control de bajo nivel con herramientas para crear y probar niveles y animaciones. El runtime usa Vulkan; el editor es una aplicación de escritorio y el empaquetador es una CLI en Python.
 
-## Estructura actual del proyecto
+## Estructura del proyecto
 
 ```text
 .
+├── engine/                         # Núcleo/runtime del engine
+│   ├── include/
+│   ├── src/
+│   ├── test/
+│   └── k_engine.h                  # Cabecera pública principal
+├── editor/                         # Editor de escritorio
+│   ├── include/
+│   ├── src/
+│   ├── test/
+│   └── main.cpp                    # Punto de entrada del editor
+├── packer/                         # CLI empaquetadora en Python
 ├── deps.md                         # Dependencias del MVP y cómo obtenerlas
 ├── docs/
 │   ├── image.png                   # Recurso gráfico de documentación
@@ -19,7 +30,14 @@ K_engine es un engine 2D personal escrito principalmente en C++17. Busca combina
 └── todo.md                         # Tareas y criterios de aceptación del MVP Linux
 ```
 
-Actualmente el repositorio contiene documentación y planificación; la implementación del runtime, el editor y el empaquetador todavía no está organizada en directorios de código.
+Los directorios `engine/src/` y `editor/src/` se mantienen separados para
+conservar independientes el código del núcleo y el del editor. `engine/k_engine.h`
+y `editor/main.cpp` están en la raíz de su componente, fuera de `src/`, para poder
+localizarlos rápidamente sin tener que entrar en el código fuente interno de cada
+componente.
+
+La estructura de directorios ya está definida; los archivos de implementación se
+irán incorporando en `engine/` y `editor/`, y la CLI en `packer/`.
 
 ## MVP
 

@@ -12,6 +12,25 @@ decisiones marcadas como `FIJA` sin informar primero al usuario.
 Trabaja solo en la tarea asignada y sus dependencias directas. No añadas
 funciones fuera del alcance del MVP Linux ni de la tarea solicitada.
 
+## Estructura Del Proyecto
+
+Respeta esta estructura y no muevas código entre componentes sin aprobación:
+
+- `engine/`: núcleo/runtime C++.
+  - `engine/include/`, `engine/src/` y `engine/test/`.
+  - `engine/k_engine.h`: cabecera pública principal, fuera de `src/` para
+    localizarla rápidamente.
+- `editor/`: editor de escritorio.
+  - `editor/include/`, `editor/src/` y `editor/test/`.
+  - `editor/main.cpp`: punto de entrada, fuera de `src/` para localizarlo
+    rápidamente.
+- `packer/`: CLI empaquetadora en Python.
+- `third_party/`: submodules de dependencias.
+
+Los dos directorios `src/` separan el código del engine y el del editor. No los
+unas, no muevas código de un componente al otro y no cambies la ubicación de
+`k_engine.h` o `main.cpp` sin aprobación.
+
 ## Archivos Permitidos
 
 Puedes editar sin pedir permiso los archivos relacionados con desarrollo y
@@ -179,8 +198,8 @@ Nunca reviertas cambios del usuario ni uses comandos destructivos.
 
 ## Criterios Del MVP
 
-- Mantén el runtime, el editor y el empaquetador en objetivos de compilación
-  separados cuando sea práctico.
+- Mantén `engine/`, `editor/` y `packer/` en objetivos de compilación separados
+  cuando sea práctico.
 - No uses `llvmpipe` para pruebas de rendimiento; la GPU objetivo es la AMD
   Radeon Graphics (Renoir, PCI `1002:15e7`) con RADV.
 - Usa Vulkan 1.3 como API objetivo inicial de la aplicación y activa
