@@ -17,19 +17,47 @@ funciones fuera del alcance del MVP Linux ni de la tarea solicitada.
 Respeta esta estructura y no muevas código entre componentes sin aprobación:
 
 - `engine/`: núcleo/runtime C++.
-  - `engine/include/`, `engine/src/` y `engine/test/`.
+  - `engine/CMakeLists.txt`: objetivos y pruebas del engine.
+  - `engine/include/`, `engine/src/`, `engine/schema/` y `engine/test/`.
   - `engine/k_engine.h`: cabecera pública principal, fuera de `src/` para
     localizarla rápidamente.
 - `editor/`: editor de escritorio.
+  - `editor/CMakeLists.txt`: objetivo y pruebas del editor.
   - `editor/include/`, `editor/src/` y `editor/test/`.
   - `editor/main.cpp`: punto de entrada, fuera de `src/` para localizarlo
     rápidamente.
 - `packer/`: CLI empaquetadora en Python.
+  - `packer/tests/`: pruebas del componente Python.
 - `third_party/`: submodules de dependencias.
 
 Los dos directorios `src/` separan el código del engine y el del editor. No los
 unas, no muevas código de un componente al otro y no cambies la ubicación de
 `k_engine.h` o `main.cpp` sin aprobación.
+
+Cada componente C++ es responsable de su propio `CMakeLists.txt`. El CMake raíz
+solo configura el proyecto, las dependencias comunes, `enable_testing()` y
+`add_subdirectory()`. No definas targets ni `add_test()` de un componente en el
+CMake raíz.
+
+## CMake Y Pruebas Por Componente
+
+- **Raíz (`CMakeLists.txt`):** configuración global C++17, dependencias de
+  `third_party/`, opciones de sus submodules, `find_package()`, `enable_testing()`
+  y `add_subdirectory()` para cada componente.
+- **`engine/CMakeLists.txt`:** define la biblioteca `k_engine`, la generación de
+  código FlatBuffers y todas las pruebas del engine.
+- **`editor/CMakeLists.txt`:** define el ejecutable del editor y todas sus
+  pruebas.
+- **`packer/`:** no usa CMake porque es Python; sus pruebas viven en
+  `packer/tests/` y se ejecutan con el runner de Python o con un wrapper de
+  CTest si se decide añadirlo.
+- **Dependencias de terceros:** se configuran una sola vez en el CMake raíz y se
+  enlazan desde el CMake del componente que las usa.
+- **Pruebas nuevas:** se registran con `add_test()` en el `CMakeLists.txt` del
+  componente que las prueba. CTest las descubre al ejecutar el build raíz.
+- **Fixtures y datos de prueba:** se guardan junto al componente que los posee.
+- **Prohibido:** duplicar targets o pruebas de un componente en el CMake raíz o
+  en otro componente.
 
 ## Archivos Permitidos
 
@@ -178,6 +206,8 @@ Nunca reviertas cambios del usuario ni uses comandos destructivos.
 - No sobrescribas archivos ni reviertas cambios existentes para resolver un
   problema.
 - No edites Markdown para registrar resultados sin pedir permiso.
+- Registra cada prueba en el `CMakeLists.txt` del componente correspondiente; no
+  añadas `add_test()` de componentes al CMake raíz.
 - Ejecuta compilaciones y pruebas disponibles sin instalar dependencias.
 - Antes de ejecutar una prueba, revisa si puede generar o modificar archivos,
   especialmente archivos Markdown, configuración, dependencias o Git.
@@ -199,7 +229,8 @@ Nunca reviertas cambios del usuario ni uses comandos destructivos.
 ## Criterios Del MVP
 
 - Mantén `engine/`, `editor/` y `packer/` en objetivos de compilación separados
-  cuando sea práctico.
+  cuando sea práctico. Cada componente C++ define sus objetivos y pruebas en su
+  propio `CMakeLists.txt`.
 - No uses `llvmpipe` para pruebas de rendimiento; la GPU objetivo es la AMD
   Radeon Graphics (Renoir, PCI `1002:15e7`) con RADV.
 - Usa Vulkan 1.3 como API objetivo inicial de la aplicación y activa

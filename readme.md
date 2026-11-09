@@ -9,21 +9,27 @@ K_engine es un engine 2D personal escrito principalmente en C++17. Busca combina
 ```text
 .
 ├── engine/                         # Núcleo/runtime del engine
+│   ├── CMakeLists.txt              # Objetivos y pruebas del engine
 │   ├── include/
+│   ├── schema/                     # Esquemas FlatBuffers
 │   ├── src/
 │   ├── test/
 │   └── k_engine.h                  # Cabecera pública principal
 ├── editor/                         # Editor de escritorio
+│   ├── CMakeLists.txt              # Objetivo y pruebas del editor
 │   ├── include/
 │   ├── src/
 │   ├── test/
 │   └── main.cpp                    # Punto de entrada del editor
 ├── packer/                         # CLI empaquetadora en Python
-├── CMakeLists.txt                  # Build C++17 del engine y del editor
+│   └── tests/                      # Pruebas del componente Python
+├── CMakeLists.txt                  # Orquesta dependencias y componentes
 ├── deps.md                         # Dependencias del MVP y cómo obtenerlas
 ├── docs/
 │   ├── image.png                   # Recurso gráfico de documentación
+│   ├── json-schemas.md             # Esquemas JSON de desarrollo
 │   ├── opencode-opcional.md        # Tareas opcionales de OpenCode
+│   ├── pak-v1.md                   # Contrato del contenedor .pak v1
 │   └── project-planning-template.md # Plantilla de planificación
 ├── general_description.md          # Descripción inicial y contexto del proyecto
 ├── k_engine.md                     # Requisitos, alcance y decisiones técnicas
@@ -38,8 +44,11 @@ y `editor/main.cpp` están en la raíz de su componente, fuera de `src/`, para p
 localizarlos rápidamente sin tener que entrar en el código fuente interno de cada
 componente.
 
-La estructura de directorios y un build mínimo con CMake ya están definidos; el
-resto de la implementación se irá incorporando en `engine/` y `editor/`, y la CLI
+Cada componente C++ define sus objetivos y pruebas en su propio
+`CMakeLists.txt`. El CMake raíz solo configura las dependencias comunes,
+`enable_testing()` y `add_subdirectory()`; no contiene targets ni `add_test()` de
+componentes. La estructura de directorios y el build mínimo ya están definidos;
+el resto de la implementación se incorporará en `engine/` y `editor/`, y la CLI
 en `packer/`.
 
 ## MVP

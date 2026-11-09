@@ -80,7 +80,7 @@ add_test(
             "PYTHONDONTWRITEBYTECODE=1"
             "PYTHONPATH=${K_ENGINE_GENERATED_PYTHON_DIR}:${CMAKE_SOURCE_DIR}/third_party/flatbuffers/python"
             "${Python3_EXECUTABLE}"
-            "${CMAKE_SOURCE_DIR}/packer/tests/generate_level_buffer.py"
+            "${CMAKE_CURRENT_SOURCE_DIR}/test/generate_level_buffer.py"
             "${K_ENGINE_LEVEL_BUFFER}"
 )
 set_tests_properties(k_engine_flatbuffers_python_generate PROPERTIES

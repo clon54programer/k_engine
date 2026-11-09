@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# El CMake raíz solo configura dependencias comunes y añade componentes.
+# Los objetivos y las pruebas viven en el CMakeLists.txt de cada componente.
 enable_testing()
 
 # FlatBuffers: compilar flatc y el runtime C++ desde el submodule.
@@ -45,12 +47,4 @@ target_include_directories(stb SYSTEM INTERFACE
 find_package(Vulkan REQUIRED)
 
 add_subdirectory(engine)
-
-add_executable(editor
-    editor/main.cpp
-)
-
-target_link_libraries(editor
-    PRIVATE
-        k_engine
-)
+add_subdirectory(editor)
