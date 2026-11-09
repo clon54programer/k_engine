@@ -30,7 +30,8 @@ K_engine es un engine 2D personal escrito principalmente en C++17. Busca combina
 │   ├── json-schemas.md             # Esquemas JSON de desarrollo
 │   ├── opencode-opcional.md        # Tareas opcionales de OpenCode
 │   ├── pak-v1.md                   # Contrato del contenedor .pak v1
-│   └── project-planning-template.md # Plantilla de planificación
+│   ├── project-planning-template.md # Plantilla de planificación
+│   └── report-t0.md                # Informe de avance de T0
 ├── general_description.md          # Descripción inicial y contexto del proyecto
 ├── k_engine.md                     # Requisitos, alcance y decisiones técnicas
 ├── readme.md                       # Resumen del proyecto

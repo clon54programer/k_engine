@@ -91,7 +91,9 @@ Estados permitidos: `PENDIENTE`, `EN CURSO`, `BLOQUEADA`, `COMPLETADA`.
 
 ### T0 — Congelar contrato y preparar entorno
 
-- **Estado:** PENDIENTE
+- **Estado:** COMPLETADA
+- **Completado:** 2026-11-09
+- **Reporte:** [docs/report-t0.md](docs/report-t0.md)
 - **Estimación:** 8 h
 - **Dependencias:** ninguna
 - **Desglose estimado:** entorno 1 h; dependencias/submodules 1,5 h; contrato `.pak` 2 h; prueba FlatBuffers Python/C++ 1,5 h; build CMake mínimo 2 h.
@@ -101,9 +103,10 @@ Estados permitidos: `PENDIENTE`, `EN CURSO`, `BLOQUEADA`, `COMPLETADA`.
   3. **Cerrar el contrato del `.pak` (2 h):** asignar valores al enum de tipos; fijar límites de memoria de la TOC y límites por tipo; conservar las reglas v1 ya definidas de little-endian, CRC-32/ISO-HDLC, offsets absolutos y alineación de payloads de 16 bytes.
   4. **Probar FlatBuffers (1,5 h):** compilar `flatc` desde el submodule y generar/verificar un buffer mínimo desde Python y C++. Usar `flatc` y runtimes de Python/C++ del mismo commit o versión compatible.
   5. **Verificar el build mínimo (2 h):** configurar C++17/CMake; compilar GLFW desde su submodule y enlazar una aplicación mínima con el Vulkan SDK. Esta prueba verifica el build, no implementa la superficie/swapchain de T1.
-- **Propuestas de límites para confirmar durante T0; no son valores aprobados todavía:** TOC de hasta 4 MiB (máximo derivado de 104 857 entradas de 40 bytes); buffers FlatBuffers de hasta 64 MiB por recurso; PNG hasta 4096 × 4096 y 64 MiB de memoria decodificada.
-- **Propuesta de dependencias C++ pendiente de confirmar:** `nlohmann/json` para JSON y `stb_image` para PNG, ambos como submodules. CRC-32 puede implementarse en el proyecto para evitar una biblioteca global adicional.
+- **Límites aprobados en T0:** TOC de hasta 4 MiB (máximo derivado de 104 857 entradas de 40 bytes); buffers FlatBuffers de hasta 64 MiB por recurso; PNG hasta 4096 × 4096 y 64 MiB de memoria decodificada. Contrato en [docs/pak-v1.md](docs/pak-v1.md).
+- **Dependencias aprobadas en T0:** `nlohmann/json` `v3.12.0` y `stb_image` 2.30 como submodules; `doctest` `v2.5.3` para pruebas. CRC-32 se implementará en el proyecto o se decidirá zlib antes de T2/T4; no se enlaza una biblioteca global.
 - **Finaliza cuando:** contrato del `.pak`, tipos y límites quedan versionados/documentados; dependencias tienen versiones fijadas como submodules; el ejemplo FlatBuffers Python/C++ funciona; el entorno del SDK está configurado; y el proyecto C++17/CMake compila en Linux sin GLFW/FlatBuffers instalados globalmente.
+- **Verificación:** `ctest --test-dir build --output-on-failure` pasa 5/5; build limpio en `/tmp/opencode/k_engine_clean_build_policy` pasa 5/5; `flatc` 25.12.19 se compila desde el submodule; GLFW 3.5.1 y Vulkan loader 1.4.363 enlazan en la prueba mínima; no hay `flatc` ni GLFW globales.
 - **No incluye:** crear ventana, superficie X11, swapchain ni presentar frames; esos trabajos pertenecen a T1.
 
 ### T1 — Prototipo técnico Vulkan Linux
