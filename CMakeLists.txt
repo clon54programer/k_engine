@@ -40,3 +40,81 @@ add_test(
     NAME k_engine_version_test
     COMMAND k_engine_version_test
 )
+
+# FlatBuffers: compilar flatc y el runtime C++ desde el submodule.
+set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(FLATBUFFERS_BUILD_FLATC ON CACHE BOOL "" FORCE)
+set(FLATBUFFERS_BUILD_FLATLIB ON CACHE BOOL "" FORCE)
+set(FLATBUFFERS_BUILD_SHAREDLIB OFF CACHE BOOL "" FORCE)
+set(FLATBUFFERS_BUILD_GRPCTEST OFF CACHE BOOL "" FORCE)
+set(FLATBUFFERS_BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+set(FLATBUFFERS_INSTALL OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
+
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
+set(K_ENGINE_SCHEMA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/engine/schema")
+set(K_ENGINE_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+set(K_ENGINE_GENERATED_CPP_DIR "${K_ENGINE_GENERATED_DIR}/cpp")
+set(K_ENGINE_GENERATED_PYTHON_DIR "${K_ENGINE_GENERATED_DIR}/python")
+set(K_ENGINE_FLATBUFFERS_STAMP "${K_ENGINE_GENERATED_DIR}/flatbuffers.stamp")
+
+add_custom_command(
+    OUTPUT "${K_ENGINE_FLATBUFFERS_STAMP}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+            "${K_ENGINE_GENERATED_CPP_DIR}"
+            "${K_ENGINE_GENERATED_PYTHON_DIR}"
+    COMMAND $<TARGET_FILE:flatc>
+            --cpp -o "${K_ENGINE_GENERATED_CPP_DIR}"
+            "${K_ENGINE_SCHEMA_DIR}/level.fbs"
+            "${K_ENGINE_SCHEMA_DIR}/animation.fbs"
+    COMMAND $<TARGET_FILE:flatc>
+            --python -o "${K_ENGINE_GENERATED_PYTHON_DIR}"
+            "${K_ENGINE_SCHEMA_DIR}/level.fbs"
+            "${K_ENGINE_SCHEMA_DIR}/animation.fbs"
+    COMMAND ${CMAKE_COMMAND} -E touch "${K_ENGINE_FLATBUFFERS_STAMP}"
+    DEPENDS
+        flatc
+        "${K_ENGINE_SCHEMA_DIR}/level.fbs"
+        "${K_ENGINE_SCHEMA_DIR}/animation.fbs"
+    COMMENT "Generando código FlatBuffers C++ y Python"
+    VERBATIM
+)
+
+add_custom_target(k_engine_flatbuffers ALL
+    DEPENDS "${K_ENGINE_FLATBUFFERS_STAMP}"
+)
+
+add_executable(k_engine_flatbuffers_roundtrip_test
+    engine/test/flatbuffers_roundtrip_test.cpp
+)
+add_dependencies(k_engine_flatbuffers_roundtrip_test k_engine_flatbuffers)
+target_include_directories(k_engine_flatbuffers_roundtrip_test
+    PRIVATE "${K_ENGINE_GENERATED_CPP_DIR}"
+)
+target_link_libraries(k_engine_flatbuffers_roundtrip_test
+    PRIVATE flatbuffers
+)
+
+set(K_ENGINE_LEVEL_BUFFER "${CMAKE_CURRENT_BINARY_DIR}/test_level.bin")
+
+add_test(
+    NAME k_engine_flatbuffers_python_generate
+    COMMAND ${CMAKE_COMMAND} -E env
+            "PYTHONDONTWRITEBYTECODE=1"
+            "PYTHONPATH=${K_ENGINE_GENERATED_PYTHON_DIR}:${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers/python"
+            "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/packer/tests/generate_level_buffer.py"
+            "${K_ENGINE_LEVEL_BUFFER}"
+)
+set_tests_properties(k_engine_flatbuffers_python_generate PROPERTIES
+    FIXTURES_SETUP k_engine_level_buffer
+)
+
+add_test(
+    NAME k_engine_flatbuffers_python_to_cpp
+    COMMAND k_engine_flatbuffers_roundtrip_test "${K_ENGINE_LEVEL_BUFFER}"
+)
+set_tests_properties(k_engine_flatbuffers_python_to_cpp PROPERTIES
+    FIXTURES_REQUIRED k_engine_level_buffer
+)
