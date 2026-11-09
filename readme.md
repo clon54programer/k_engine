@@ -23,6 +23,7 @@ K_engine es un engine 2D personal escrito principalmente en C++17. Busca combina
 ├── deps.md                         # Dependencias del MVP y cómo obtenerlas
 ├── docs/
 │   ├── image.png                   # Recurso gráfico de documentación
+│   ├── opencode-opcional.md        # Tareas opcionales de OpenCode
 │   └── project-planning-template.md # Plantilla de planificación
 ├── general_description.md          # Descripción inicial y contexto del proyecto
 ├── k_engine.md                     # Requisitos, alcance y decisiones técnicas
