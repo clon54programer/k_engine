@@ -2,6 +2,32 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "deepseek/deepseek-flash",
   "default_agent": "build",
+  "formatter": true,
+  "lsp": {
+    "clangd": {
+      "command": [
+        "clangd"
+      ],
+      "extensions": [
+        ".c",
+        ".cc",
+        ".cpp",
+        ".cxx",
+        ".c++",
+        ".h",
+        ".hh",
+        ".hpp",
+        ".hxx",
+        ".h++"
+      ]
+    },
+    "bash": {
+      "disabled": true
+    },
+    "yaml-ls": {
+      "disabled": true
+    }
+  },
   "agents": {
     "build": {
       "description": "Desarrollo principal de K_engine: runtime C++17, editor y empaquetador.",
@@ -301,6 +327,31 @@
     {
       "action": "shell",
       "resource": "chown *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "mv *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "cp *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "sed -i *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "sed --in-place *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "find * -delete*",
       "effect": "ask"
     }
   ],

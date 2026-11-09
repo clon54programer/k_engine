@@ -19,6 +19,7 @@ K_engine es un engine 2D personal escrito principalmente en C++17. Busca combina
 │   ├── test/
 │   └── main.cpp                    # Punto de entrada del editor
 ├── packer/                         # CLI empaquetadora en Python
+├── CMakeLists.txt                  # Build C++17 del engine y del editor
 ├── deps.md                         # Dependencias del MVP y cómo obtenerlas
 ├── docs/
 │   ├── image.png                   # Recurso gráfico de documentación
@@ -36,8 +37,9 @@ y `editor/main.cpp` están en la raíz de su componente, fuera de `src/`, para p
 localizarlos rápidamente sin tener que entrar en el código fuente interno de cada
 componente.
 
-La estructura de directorios ya está definida; los archivos de implementación se
-irán incorporando en `engine/` y `editor/`, y la CLI en `packer/`.
+La estructura de directorios y un build mínimo con CMake ya están definidos; el
+resto de la implementación se irá incorporando en `engine/` y `editor/`, y la CLI
+en `packer/`.
 
 ## MVP
 
