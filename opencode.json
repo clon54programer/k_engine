@@ -1,0 +1,480 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "deepseek/deepseek-flash",
+  "default_agent": "build",
+  "agents": {
+    "build": {
+      "description": "Desarrollo principal de K_engine: runtime C++17, editor y empaquetador.",
+      "mode": "primary",
+      "model": "deepseek/deepseek-flash"
+    },
+    "plan": {
+      "description": "Planificación y razonamiento para el MVP de K_engine.",
+      "mode": "primary",
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "plan-light": {
+      "description": "Planificación ligera para tareas acotadas del MVP de K_engine.",
+      "mode": "primary",
+      "model": "deepseek/deepseek-flash",
+      "system": "Planifica cambios para K_engine sin modificar el repositorio. Inspecciona el código y la documentación relevantes, desglosa la tarea en fases verificables y señala decisiones, riesgos y criterios de aceptación. No edites archivos del proyecto; si necesitas conservar un plan, usa únicamente el archivo de planificación de OpenCode.",
+      "permissions": [
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "edit",
+          "resource": "~/.opencode/plan/*",
+          "effect": "allow"
+        },
+        {
+          "action": "external_directory",
+          "resource": "~/.opencode/plan/*",
+          "effect": "allow"
+        }
+      ]
+    }
+  },
+  "permissions": [
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "subagent",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.md",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "opencode.json",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "opencode.jsonc",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": ".opencode/*",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.json",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.jsonc",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.toml",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.yaml",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.yml",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.ini",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.cfg",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.conf",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.sh",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.sql",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.xml",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*CMakeLists.txt",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.cmake",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": ".gitmodules",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "third_party/*",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "Dockerfile*",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*Makefile",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*GNUmakefile",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": ".env*",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*.env*",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*requirements*.txt",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*pyproject.toml",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*setup.py",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*setup.cfg",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*Pipfile",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*Pipfile.lock",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*poetry.lock",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*uv.lock",
+      "effect": "ask"
+    },
+    {
+      "action": "edit",
+      "resource": "*conftest.py",
+      "effect": "ask"
+    }
+  ],
+  "policies": [
+    {
+      "action": "tool.use",
+      "resource": "shell:pip install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:pip3 install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:python -m pip install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:python3 -m pip install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:npm install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:pnpm install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:yarn install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:poetry install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:uv add *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:apt install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:apt-get install *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:sudo *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:docker pull *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:docker build *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git add *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git commit *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git push *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git pull *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git fetch *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git submodule add *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git submodule update *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git reset *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git restore *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git checkout *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git switch *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git merge *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git rebase *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git stash *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git clean *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git rm *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git mv *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git apply *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git am *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git cherry-pick *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git revert *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git init *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git clone *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git remote add *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git remote remove *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git remote set-url *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git config *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git branch -d *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git branch -D *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git branch -m *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git branch -M *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git branch --delete *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git branch --move *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag -a *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag -s *",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git tag -d *",
+      "effect": "deny"
+    }
+  ],
+  "watcher": {
+    "ignore": [
+      "build/**",
+      "build-*/**",
+      ".venv/**",
+      "__pycache__/**",
+      "*.pyc",
+      ".cache/**",
+      "third_party/**"
+    ]
+  }
+}
