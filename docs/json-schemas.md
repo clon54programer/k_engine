@@ -333,3 +333,89 @@ Los esquemas están en:
 
 El runtime verifica cada buffer con `flatbuffers::Verifier` antes de leerlo. Los
 FlatBuffers se empaquetan como entradas de tipo `1` y `2` en el `.pak` v1.
+
+## 7. Descripción de campos
+
+Esta sección complementa las tablas anteriores y explica la intención de cada
+campo. Los tipos, la obligatoriedad y los límites están en las secciones 2–4.
+
+### 7.1 `project.json`
+
+| Campo | Descripción |
+|---|---|
+| `schema_version` | Versión del esquema; el packer solo acepta `"1.0"`. |
+| `project_id` | Identificador estable y legible del proyecto, útil para diagnósticos y nombres de salida. |
+| `name` | Nombre visible del proyecto en el editor y en los mensajes. |
+| `next_id` | Siguiente ID global libre. El editor lo incrementa al crear recursos y el packer comprueba que no se reutilice. |
+| `entry_level_id` | Nivel que el runtime carga por defecto al abrir el `.pak`. |
+| `assets` | Lista de imágenes PNG que forman parte del proyecto. |
+| `levels` | Lista de niveles editables y la ruta de cada JSON. |
+| `animations` | Lista de clips de animación y la ruta de cada JSON. |
+| `assets[].id` | ID global del PNG; se usa para referenciarlo desde niveles y animaciones. |
+| `assets[].type` | Tipo de recurso; en v1 solo se admite `"png"`. |
+| `assets[].path` | Ruta relativa al archivo PNG desde el directorio de `project.json`. |
+| `levels[].id` | ID global del nivel; debe coincidir con el `id` interno del `level.json`. |
+| `levels[].path` | Ruta relativa al archivo JSON del nivel. |
+| `animations[].id` | ID global del clip; debe coincidir con el `id` interno del `animation.json`. |
+| `animations[].path` | Ruta relativa al archivo JSON de la animación. |
+
+### 7.2 `level.json`
+
+| Campo | Descripción |
+|---|---|
+| `schema_version` | Versión del esquema del nivel; debe ser `"1.0"`. |
+| `id` | ID global del nivel; debe coincidir con la entrada de `project.json`. |
+| `name` | Nombre visible del nivel. |
+| `grid` | Define el tamaño de celda y las dimensiones lógicas del tilemap. |
+| `tilesets` | Imágenes y metadatos necesarios para interpretar los tiles. |
+| `layers` | Capas de dibujo o de colisión que componen el nivel. |
+| `entities` | Sprites o animaciones colocados sobre el nivel. |
+| `grid.tile_width` | Ancho de cada celda del tilemap en píxeles. |
+| `grid.tile_height` | Alto de cada celda del tilemap en píxeles. |
+| `grid.columns` | Número de columnas de la cuadrícula. |
+| `grid.rows` | Número de filas de la cuadrícula. |
+| `tilesets[].id` | ID local del tileset dentro del nivel. |
+| `tilesets[].image_id` | ID global del PNG que contiene la imagen del tileset. |
+| `tilesets[].tile_width` | Ancho de cada tile dentro de la imagen; debe coincidir con la cuadrícula. |
+| `tilesets[].tile_height` | Alto de cada tile dentro de la imagen; debe coincidir con la cuadrícula. |
+| `tilesets[].columns` | Número de columnas de tiles en la imagen. |
+| `tilesets[].rows` | Número de filas de tiles en la imagen. |
+| `layers[].id` | ID local de la capa. |
+| `layers[].name` | Nombre visible de la capa en el editor. |
+| `layers[].kind` | Uso lógico: `tile` para dibujo y `collision` para datos de paredes. |
+| `layers[].visible` | Indica si la capa debe dibujarse; una capa de colisión puede estar oculta. |
+| `layers[].tileset_id` | Tileset local que interpreta los índices de `tiles`. |
+| `layers[].tiles` | Matriz lineal de índices de tile; `0` significa celda vacía y `1..N` indexa el tileset. |
+| `entities[].id` | ID local de la entidad dentro del nivel. |
+| `entities[].image_id` | ID global de un PNG estático; alternativa a `animation_id`. |
+| `entities[].animation_id` | ID global de una animación; alternativa a `image_id`. |
+| `entities[].x` | Posición horizontal de la entidad en píxeles. |
+| `entities[].y` | Posición vertical de la entidad en píxeles. |
+| `entities[].layer_id` | Capa local que determina el orden de dibujo de la entidad. |
+
+### 7.3 `animation.json`
+
+| Campo | Descripción |
+|---|---|
+| `schema_version` | Versión del esquema de la animación; debe ser `"1.0"`. |
+| `id` | ID global del clip; debe coincidir con la entrada de `project.json`. |
+| `name` | Nombre visible del clip, por ejemplo `idle` o `walk_right`. |
+| `image_id` | ID global del PNG que contiene la spritesheet. |
+| `frame_width` | Ancho nominal de un fotograma; se usa para pivot, hitbox y previsualización. |
+| `frame_height` | Alto nominal de un fotograma. |
+| `fps` | Velocidad de reproducción por defecto en fotogramas por segundo. |
+| `loop` | Indica si el clip vuelve al primer fotograma al terminar. |
+| `pivot` | Origen de transformación del sprite dentro del fotograma. |
+| `hitbox` | Caja de colisión o metadatos asociada al fotograma. |
+| `frames` | Lista ordenada de recortes que forman la animación. |
+| `pivot.x` | Coordenada horizontal del pivote respecto a la esquina superior izquierda del fotograma. |
+| `pivot.y` | Coordenada vertical del pivote respecto a la esquina superior izquierda del fotograma. |
+| `hitbox.x` | Coordenada horizontal de la esquina superior izquierda de la hitbox. |
+| `hitbox.y` | Coordenada vertical de la esquina superior izquierda de la hitbox. |
+| `hitbox.w` | Ancho de la hitbox; debe ser mayor que cero. |
+| `hitbox.h` | Alto de la hitbox; debe ser mayor que cero. |
+| `frames[].x` | Coordenada horizontal del recorte dentro de la spritesheet. |
+| `frames[].y` | Coordenada vertical del recorte dentro de la spritesheet. |
+| `frames[].w` | Ancho del recorte en píxeles. |
+| `frames[].h` | Alto del recorte en píxeles. |
+| `frames[].duration_ms` | Duración específica del fotograma en milisegundos; `0` u omitido usa `fps`. |
