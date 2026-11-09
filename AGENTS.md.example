@@ -1,0 +1,300 @@
+# K_Wiki Agent Instructions
+
+## Objetivo
+
+Desarrolla y prueba K_Wiki de forma autónoma siempre que la tarea no requiera
+modificar documentación, configuración, dependencias o Git.
+
+Prioriza cambios pequeños, verificables y coherentes con `k_wiki.md`. No
+contradigas decisiones documentadas sin informar primero al usuario.
+
+## Archivos Permitidos
+
+Puedes editar sin pedir permiso los archivos relacionados con desarrollo y
+pruebas, especialmente:
+
+- `*.py`
+- `*.css`
+- `*.js`
+- `*.html`
+
+Los archivos de configuración, documentación y Markdown requieren aprobación
+explícita antes de modificarse.
+
+Considera configuración, como mínimo:
+
+- `*.md`
+- `opencode.json`
+- `opencode.jsonc`
+- `.opencode/**`
+- `*.json`
+- `*.jsonc`
+- `*.toml`
+- `*.yaml`
+- `*.yml`
+- `*.ini`
+- `*.cfg`
+- `*.conf`
+- `*.sh`
+- `*.sql`
+- `*.xml`
+- `Dockerfile` y archivos `Dockerfile.*`
+- `Makefile` y `GNUmakefile`
+- `.env*`
+- `settings.py`
+- `manage.py`
+- `conftest.py`
+- `migrations/**`
+- Archivos de dependencias y bloqueos.
+
+Si necesitas modificar uno de estos archivos:
+
+1. Detén la tarea antes de editarlo.
+2. Explica el motivo exacto.
+3. Indica el cambio propuesto.
+4. Solicita aprobación al usuario.
+
+## Dependencias E Instalación
+
+No instales paquetes, librerías, herramientas, navegadores ni sistemas externos.
+
+No ejecutes comandos como:
+
+- `pip install`
+- `npm install`
+- `pnpm install`
+- `yarn install`
+- `poetry install`
+- `uv add`
+- `apt install`
+- `sudo`
+- `docker pull`
+- `docker build`
+
+Si falta una dependencia:
+
+1. No intentes instalarla.
+2. Ejecuta la notificación de bloqueo.
+3. Informa el comando exacto que debe ejecutar el usuario manualmente.
+4. Explica qué tarea no pudo completarse por esa ausencia.
+
+## Git
+
+Git solo puede utilizarse para lectura.
+
+Puedes consultar:
+
+- Estado del repositorio.
+- Diferencias.
+- Historial.
+- Commits.
+- Ramas actuales.
+- Archivos registrados.
+- Blame.
+- Remotos.
+
+No puedes ejecutar acciones que modifiquen Git, incluyendo:
+
+- `git add`
+- `git commit`
+- `git push`
+- `git pull`
+- `git fetch`
+- `git reset`
+- `git restore`
+- `git checkout`
+- `git switch`
+- `git merge`
+- `git rebase`
+- `git stash`
+- `git clean`
+- Crear o eliminar ramas y etiquetas.
+
+Nunca reviertas cambios del usuario ni uses comandos destructivos.
+
+## Desarrollo Y Pruebas
+
+- Inspecciona primero el código y las pruebas existentes.
+- Reutiliza las convenciones del proyecto.
+- Escribe en inglés los elementos propios del código y del desarrollo,
+  incluidos los nombres de variables, funciones, clases, constantes y otros
+  identificadores.
+- Escribe en español todo el contenido destinado a la lectura de usuarios o
+  desarrolladores, incluidos comentarios, documentación, textos visibles en el
+  HTML y mensajes de registro (logs).
+- No hagas refactorizaciones, limpiezas ni cambios de estilo ajenos a la tarea
+  solicitada.
+- Antes de editar un archivo, inspecciona su contenido y conserva cualquier
+  trabajo existente del usuario.
+- No sobrescribas archivos ni reviertas cambios existentes para resolver un
+  problema.
+- No edites Markdown para registrar resultados sin pedir permiso.
+- Ejecuta las pruebas disponibles sin instalar dependencias.
+- Antes de ejecutar una prueba, revisa si puede generar o modificar archivos,
+  especialmente archivos Markdown, configuración, dependencias o Git.
+- Si una prueba puede modificar archivos protegidos, no la ejecutes sin permiso.
+- Cuando sea posible, dirige los artefactos temporales de las pruebas fuera del
+  repositorio o a una ubicación temporal.
+- Distingue entre pruebas ejecutadas, pruebas fallidas y pruebas que no pudieron
+  ejecutarse.
+- No afirmes que una prueba pasó si no se pudo ejecutar.
+- No modifiques archivos de configuración para hacer que una prueba pase sin
+  aprobación del usuario.
+- Si una tarea pesada tarda, informa su estado en lugar de repetirla sin límite.
+- No delegues trabajo a subagentes salvo que el usuario lo solicite explícitamente.
+
+## Skills Para Accesibilidad Web
+
+- Cuando trabajes en una auditoría de accesibilidad de la interfaz, WCAG o
+  problemas de accesibilidad, carga la skill `accessibility-testing` con la
+  herramienta `skill` antes de empezar.
+- Cuando la tarea requiera automatizar la navegación o las interacciones en el
+  navegador, carga también `playwright-automation` con la herramienta `skill`.
+- Estas instrucciones se aplican al agente principal Build y a cualquier otro
+  agente que realice esas tareas. Comprueba que la herramienta `skill` esté
+  permitida para el agente activo.
+- Si una skill no aparece o no se puede cargar, no afirmes que la utilizaste.
+  Informa al usuario y facilita los comandos de instalación indicados abajo;
+  no ejecutes esos comandos ni instales las skills por tu cuenta.
+- Las skills aportan instrucciones, pero no instalan Playwright, axe-core ni
+  navegadores, y una auditoría automatizada no garantiza por sí sola el
+  cumplimiento de WCAG. Distingue los resultados automatizados de las
+  comprobaciones manuales pendientes.
+
+### Instalación De Las Skills En Otros Entornos
+
+Ejecuta estos comandos manualmente desde la terminal del usuario. El primero
+permite consultar las skills disponibles en el repositorio:
+
+```bash
+npx skills add petrkindlmann/qa-skills --list
+```
+
+Para instalarlas en el proyecto actual y habilitarlas en OpenCode:
+
+```bash
+npx skills add petrkindlmann/qa-skills \
+  --skill accessibility-testing \
+  --skill playwright-automation \
+  --agent opencode
+```
+
+Para instalarlas globalmente en el entorno de OpenCode del usuario, añade
+`--global`:
+
+```bash
+npx skills add petrkindlmann/qa-skills \
+  --skill accessibility-testing \
+  --skill playwright-automation \
+  --agent opencode \
+  --global
+```
+
+Para instalarlas en todos los agentes compatibles que detecte el instalador:
+
+```bash
+npx skills add petrkindlmann/qa-skills \
+  --skill accessibility-testing \
+  --skill playwright-automation \
+  --agent '*'
+```
+
+El instalador puede ofrecer instalar además `find-skills`; esa skill es opcional
+y se puede rechazar sin cancelar la instalación de las skills solicitadas.
+Después de instalarlas, inicia una nueva sesión de OpenCode y comprueba que
+ambas skills aparezcan y puedan cargarse. Si se instalan manualmente para
+OpenCode, coloca cada carpeta —con su `SKILL.md`— en `.agents/skills/` o
+`.opencode/skills/` para el proyecto, o en `~/.agents/skills/` o
+`~/.config/opencode/skills/` para el entorno global. Para otros agentes,
+utiliza una ruta compatible con ese entorno o el selector `--agent` del CLI.
+
+## Límite De Intentos
+
+Un intento es un ciclo completo de corrección y comprobación de una tarea.
+
+Después de tres intentos fallidos:
+
+- Detén la tarea.
+- No hagas un cuarto intento automáticamente.
+- Conserva los cambios realizados.
+- Ejecuta la notificación de bloqueo.
+- Explica el error, los tres intentos, los archivos afectados y las medidas que
+  debe tomar el usuario.
+
+Los errores de cuota, límite de cinco horas o créditos agotados no cuentan como
+intentos de corrección. En esos casos, detén la tarea, notifica al usuario y
+espera a que seleccione manualmente otro modelo.
+
+## Notificaciones
+
+Usa `bash k_wiki_notify.sh` desde la raíz del proyecto para notificar al usuario.
+No invoques directamente `notify-send` ni `paplay`. El script muestra primero la
+notificación visual y después reproduce el sonido mediante comandos separados,
+sin encadenarlos. Ejecuta el script en una llamada Bash independiente.
+
+Antes de realizar cualquier acción que requiera interacción manual del usuario,
+incluida una llamada Bash que OpenCode pueda pausar para solicitar autorización,
+ejecuta primero la notificación siguiente en una llamada Bash independiente.
+No inicies la acción que requiere autorización ni ejecutes ambas llamadas en
+paralelo; espera a que termine el script y luego solicita la intervención manual
+o continúa con la acción. Esto también aplica cuando vayas a formular una
+pregunta mediante la herramienta `Question` de OpenCode.
+
+```bash
+bash k_wiki_notify.sh attention "[motivo]" \
+  --component "[componente relacionado]" \
+  --files "[archivos modificados o ninguno]" \
+  --tests-run "[pruebas ejecutadas o ninguna]" \
+  --tests-unavailable "[pruebas que no pudieron ejecutarse o ninguna]" \
+  --errors "[errores pendientes o ninguno]" \
+  --manual-action "[acción que debe realizar el usuario]"
+```
+
+Cuando termines de desarrollar y comprobar un componente, ejecuta:
+
+```bash
+bash k_wiki_notify.sh completed \
+  --component "[componente terminado]" \
+  --files "[archivos modificados o ninguno]" \
+  --tests-run "[pruebas ejecutadas o ninguna]" \
+  --tests-unavailable "[pruebas que no pudieron ejecutarse o ninguna]" \
+  --errors "[errores pendientes o ninguno]" \
+  --manual-action "[acción manual pendiente o ninguna]"
+```
+
+Cuando una tarea se bloquee después de tres intentos, ejecuta:
+
+```bash
+bash k_wiki_notify.sh blocked \
+  --component "[componente bloqueado]" \
+  --files "[archivos modificados o ninguno]" \
+  --tests-run "[pruebas ejecutadas o ninguna]" \
+  --tests-unavailable "[pruebas que no pudieron ejecutarse o ninguna]" \
+  --errors "[errores que permanecen]" \
+  --manual-action "[medida que debe realizar el usuario]"
+```
+
+Sustituye todos los valores entre corchetes por información real. El script
+imprime un informe con el componente, los archivos modificados, las pruebas
+ejecutadas y no ejecutadas, los errores, la acción manual y el resultado de cada
+notificación. Después de ejecutarlo, comunica ese informe al usuario. Si el
+script devuelve un error o indica que una notificación falló, informa qué parte
+no se completó y no afirmes que tuvo éxito.
+
+## Modelos
+
+Usa estos modelos mediante selección manual cuando sea necesario:
+
+- Desarrollo principal (`build` y `build-deepseek`): `deepseek/deepseek-flash`.
+- Planificación y razonamiento (`plan` y `plan-deepseek`): `deepseek/deepseek-v4-pro`.
+
+No cambies de modelo silenciosamente. Si el modelo actual alcanza un límite,
+notifica al usuario y espera a que seleccione otro modelo.
+
+## Seguridad
+
+- No expongas secretos, contraseñas ni tokens.
+- No leas archivos fuera del proyecto salvo que el usuario lo autorice.
+- No envíes contenido del proyecto a servicios externos sin autorización.
+- No elimines archivos ni datos para resolver un error.
+- Si una instrucción del usuario contradice estas reglas, solicita aclaración.
