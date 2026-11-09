@@ -9,6 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(k_engine STATIC
     engine/src/version.cpp
+    engine/src/stb_impl.cpp
 )
 
 target_include_directories(k_engine
@@ -43,12 +44,12 @@ add_test(
 
 # FlatBuffers: compilar flatc y el runtime C++ desde el submodule.
 set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(FLATBUFFERS_INSTALL OFF CACHE BOOL "" FORCE)
 set(FLATBUFFERS_BUILD_FLATC ON CACHE BOOL "" FORCE)
 set(FLATBUFFERS_BUILD_FLATLIB ON CACHE BOOL "" FORCE)
 set(FLATBUFFERS_BUILD_SHAREDLIB OFF CACHE BOOL "" FORCE)
 set(FLATBUFFERS_BUILD_GRPCTEST OFF CACHE BOOL "" FORCE)
 set(FLATBUFFERS_BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
-set(FLATBUFFERS_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
 
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
@@ -117,4 +118,60 @@ add_test(
 )
 set_tests_properties(k_engine_flatbuffers_python_to_cpp PROPERTIES
     FIXTURES_REQUIRED k_engine_level_buffer
+)
+
+# GLFW: ventana X11 e input. Sin Wayland ni artefactos auxiliares.
+set(GLFW_BUILD_X11 ON CACHE BOOL "" FORCE)
+set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/glfw EXCLUDE_FROM_ALL)
+
+# nlohmann/json: parser JSON del editor.
+set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/nlohmann_json EXCLUDE_FROM_ALL)
+
+# doctest: framework de pruebas C++.
+set(DOCTEST_WITH_TESTS OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/doctest EXCLUDE_FROM_ALL)
+
+# stb: decodificación PNG y rasterización de texto.
+add_library(stb INTERFACE)
+target_include_directories(stb SYSTEM INTERFACE
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb"
+)
+target_link_libraries(k_engine PRIVATE stb)
+
+find_package(Vulkan REQUIRED)
+
+add_executable(k_engine_dependencies_smoke_test
+    engine/test/dependencies_smoke_test.cpp
+)
+target_link_libraries(k_engine_dependencies_smoke_test
+    PRIVATE
+        k_engine
+        nlohmann_json::nlohmann_json
+        doctest::doctest
+        stb
+)
+
+add_test(
+    NAME k_engine_dependencies_smoke_test
+    COMMAND k_engine_dependencies_smoke_test
+)
+
+add_executable(k_engine_glfw_vulkan_build_test
+    engine/test/glfw_vulkan_build_test.cpp
+)
+target_link_libraries(k_engine_glfw_vulkan_build_test
+    PRIVATE
+        glfw
+        Vulkan::Vulkan
+)
+
+add_test(
+    NAME k_engine_glfw_vulkan_build_test
+    COMMAND k_engine_glfw_vulkan_build_test
 )
