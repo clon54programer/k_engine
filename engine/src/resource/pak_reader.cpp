@@ -401,8 +401,8 @@ bool PakReader::parse_and_validate_entries(
     {
         const PakEntry &previous = *ranges[index - 1U];
         const PakEntry &current = *ranges[index];
-        const std::uint64_t previous_end = previous.offset + previous.size;
-        if (current.offset < previous_end)
+        const std::uint64_t PREVIOUS_END = previous.offset + previous.size;
+        if (current.offset < PREVIOUS_END)
         {
             return fail("Payloads solapados en " + _path + " (IDs " +
                         std::to_string(previous.id) + " y " + std::to_string(current.id) +

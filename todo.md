@@ -127,7 +127,9 @@ Estados permitidos: `PENDIENTE`, `EN CURSO`, `BLOQUEADA`, `COMPLETADA`.
 
 ### T2 — Runtime Linux mínimo
 
-- **Estado:** PENDIENTE
+- **Estado:** COMPLETADA
+- **Completado:** 2026-11-09
+- **Reporte:** [docs/report-t2.md](docs/report-t2.md)
 - **Estimación:** 32 h
 - **Dependencias:** T1 y T0
 - **Trabajo:**
@@ -137,6 +139,7 @@ Estados permitidos: `PENDIENTE`, `EN CURSO`, `BLOQUEADA`, `COMPLETADA`.
   - Verificar buffers FlatBuffers antes de leerlos.
   - Cargar y renderizar un sprite usando un paquete de prueba, sin esperar a que termine la CLI.
 - **Finaliza cuando:** el runtime carga un `.pak` de prueba, muestra correctamente el sprite, responde a input básico y cierra sin errores de Vulkan atribuibles al engine.
+- **Verificación:** `ctest --test-dir build --output-on-failure` pasa 9/9; el runtime carga `runtime_test.pak` y presenta 1/300 frames con salida `0` en la AMD `1002:15e7`, con 0 errores y 0 advertencias del engine; flechas/WASD y clic izquierdo mueven el sprite, ESC cierra, resize/minimizado/cierre terminan con salida `0`; build limpio Debug en `/tmp/opencode/k_engine_t2_clean_build_final` pasa 9/9; build Release compila y pasa 9/9; `clang-format` y `clang-tidy` pasan.
 
 ### T3 — Editor Linux mínimo
 
