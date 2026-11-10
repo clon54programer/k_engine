@@ -15,6 +15,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "resource/pak_reader.h"
+
 namespace k_engine::runtime
 {
 
@@ -29,11 +31,14 @@ constexpr float DEVICE_QUEUE_PRIORITY = 1.0F;
 constexpr std::uint32_t AMD_VENDOR_ID = 0x1002;
 constexpr std::uint32_t AMD_RENOIR_DEVICE_ID = 0x15E7;
 constexpr const char *VALIDATION_LAYER_NAME = "VK_LAYER_KHRONOS_validation";
-constexpr const char *WINDOW_TITLE = "K_engine — prototipo Vulkan T1";
+constexpr const char *WINDOW_TITLE = "K_engine — runtime Vulkan T2";
 constexpr float CLEAR_COLOR_RED_BASE = 0.05F;
 constexpr float CLEAR_COLOR_GREEN_BASE = 0.08F;
 constexpr float CLEAR_COLOR_BLUE_BASE = 0.14F;
 constexpr float CLEAR_COLOR_AMPLITUDE = 0.04F;
+constexpr double SPRITE_MOVE_SPEED = 200.0;
+constexpr double MAX_FRAME_DELTA_SECONDS = 0.1;
+constexpr double HALF_DIVISOR = 2.0;
 
 constexpr std::array<VkCompositeAlphaFlagBitsKHR, 4> COMPOSITE_ALPHA_CANDIDATES = {
     VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
@@ -281,7 +286,7 @@ VulkanRuntime::~VulkanRuntime()
     Shutdown();
 }
 
-bool VulkanRuntime::Initialize()
+bool VulkanRuntime::Initialize(const RuntimeOptions &options)
 {
     _shutdown_complete = false;
     _engine_error_count = 0;
@@ -354,6 +359,16 @@ bool VulkanRuntime::Initialize()
         return false;
     }
 
+    if (!load_content(options))
+    {
+        return false;
+    }
+
+    if (_has_content && !create_sprite_renderer())
+    {
+        return false;
+    }
+
     if (!create_command_buffer())
     {
         return false;
@@ -364,6 +379,7 @@ bool VulkanRuntime::Initialize()
         return false;
     }
 
+    _last_frame_time = glfwGetTime();
     return true;
 }
 
@@ -375,6 +391,7 @@ int VulkanRuntime::Run(const RuntimeOptions &options)
         return 1;
     }
 
+    _last_frame_time = glfwGetTime();
     std::uint32_t frames_presented = 0;
     while (glfwWindowShouldClose(_window) == GLFW_FALSE &&
            (options.frame_limit == 0 || frames_presented < options.frame_limit))
@@ -551,6 +568,7 @@ void VulkanRuntime::Shutdown() noexcept
         (void)vkDeviceWaitIdle(_device);
     }
 
+    _sprite_renderer.Shutdown();
     cleanup_swapchain();
 
     if (_device != VK_NULL_HANDLE)
@@ -599,6 +617,9 @@ void VulkanRuntime::Shutdown() noexcept
         _glfw_initialized = false;
     }
 
+    _has_content = false;
+    _content = LoadedContent{};
+    _input = InputState{};
     report_validation_summary();
     _shutdown_complete = true;
 }
@@ -765,6 +786,8 @@ bool VulkanRuntime::create_window()
     glfwSetWindowUserPointer(_window, this);
     glfwSetFramebufferSizeCallback(_window, &VulkanRuntime::framebuffer_size_callback);
     glfwSetKeyCallback(_window, &VulkanRuntime::key_callback);
+    glfwSetCursorPosCallback(_window, &VulkanRuntime::cursor_position_callback);
+    glfwSetMouseButtonCallback(_window, &VulkanRuntime::mouse_button_callback);
     return true;
 }
 
@@ -1183,6 +1206,136 @@ void VulkanRuntime::destroy_sync_objects() noexcept
     }
 }
 
+bool VulkanRuntime::load_content(const RuntimeOptions &options)
+{
+    _has_content = false;
+    _content = LoadedContent{};
+
+    if (options.package_path.empty())
+    {
+        LogInfo("Sin paquete: se presenta solo el color de limpieza.");
+        return true;
+    }
+
+    resource::PakReader pak;
+    if (!pak.Open(options.package_path))
+    {
+        LogError(pak.LastError());
+        return false;
+    }
+
+    std::string error;
+    if (!ContentLoader::Load(pak, options.level_id, _content, error))
+    {
+        LogError(error);
+        return false;
+    }
+
+    _has_content = true;
+    _sprite_x = static_cast<double>(_content.sprite_x);
+    _sprite_y = static_cast<double>(_content.sprite_y);
+
+    LogInfo("Paquete cargado: " + options.package_path + " (" +
+            std::to_string(pak.Entries().size()) + " recursos).");
+    LogInfo("Nivel cargado: " + std::to_string(_content.level_id) + " \"" +
+            _content.level_name + "\".");
+    LogInfo("Sprite cargado: PNG " + std::to_string(_content.sprite.image_id) + " (" +
+            std::to_string(_content.sprite.width) + "x" +
+            std::to_string(_content.sprite.height) + ").");
+    return true;
+}
+
+bool VulkanRuntime::create_sprite_renderer()
+{
+    if (!_has_content)
+    {
+        return true;
+    }
+
+    if (!_sprite_renderer.Initialize(_physical_device, _device, _command_pool,
+                                     _graphics_queue, _render_pass, _swapchain_extent,
+                                     _content.sprite))
+    {
+        LogError("No se pudo crear el pipeline y la textura del sprite.");
+        return false;
+    }
+
+    return true;
+}
+
+float VulkanRuntime::frame_delta_seconds() noexcept
+{
+    const double NOW = glfwGetTime();
+    double delta = NOW - _last_frame_time;
+    _last_frame_time = NOW;
+
+    if (delta < 0.0)
+    {
+        delta = 0.0;
+    }
+    else if (delta > MAX_FRAME_DELTA_SECONDS)
+    {
+        delta = MAX_FRAME_DELTA_SECONDS;
+    }
+
+    return static_cast<float>(delta);
+}
+
+void VulkanRuntime::clamp_sprite_position()
+{
+    if (!_has_content)
+    {
+        return;
+    }
+
+    const auto WIDTH = static_cast<double>(_content.sprite.width);
+    const auto HEIGHT = static_cast<double>(_content.sprite.height);
+    const double MAX_X =
+        std::max(0.0, static_cast<double>(_swapchain_extent.width) - WIDTH);
+    const double MAX_Y =
+        std::max(0.0, static_cast<double>(_swapchain_extent.height) - HEIGHT);
+
+    _sprite_x = std::clamp(_sprite_x, 0.0, MAX_X);
+    _sprite_y = std::clamp(_sprite_y, 0.0, MAX_Y);
+}
+
+void VulkanRuntime::update_scene(float delta_seconds)
+{
+    if (!_has_content)
+    {
+        return;
+    }
+
+    const double DISTANCE = SPRITE_MOVE_SPEED * static_cast<double>(delta_seconds);
+    if (_input.IsPressed(InputAction::MOVE_LEFT))
+    {
+        _sprite_x -= DISTANCE;
+    }
+    if (_input.IsPressed(InputAction::MOVE_RIGHT))
+    {
+        _sprite_x += DISTANCE;
+    }
+    if (_input.IsPressed(InputAction::MOVE_UP))
+    {
+        _sprite_y -= DISTANCE;
+    }
+    if (_input.IsPressed(InputAction::MOVE_DOWN))
+    {
+        _sprite_y += DISTANCE;
+    }
+
+    double click_x = 0.0;
+    double click_y = 0.0;
+    if (_input.ConsumeLeftClick(click_x, click_y))
+    {
+        _sprite_x = click_x - (static_cast<double>(_content.sprite.width) / HALF_DIVISOR);
+        _sprite_y =
+            click_y - (static_cast<double>(_content.sprite.height) / HALF_DIVISOR);
+    }
+
+    clamp_sprite_position();
+}
+
 bool VulkanRuntime::recreate_swapchain()
 {
     int width = 0;
@@ -1200,10 +1353,20 @@ bool VulkanRuntime::recreate_swapchain()
     }
 
     destroy_sync_objects();
+    _sprite_renderer.DestroyPipeline();
     cleanup_swapchain();
 
-    return create_swapchain() && create_image_views() && create_render_pass() &&
-           create_framebuffers() && create_sync_objects();
+    if (!create_swapchain() || !create_image_views() || !create_render_pass())
+    {
+        return false;
+    }
+
+    if (_has_content && !_sprite_renderer.CreatePipeline(_render_pass, _swapchain_extent))
+    {
+        return false;
+    }
+
+    return create_framebuffers() && create_sync_objects();
 }
 
 void VulkanRuntime::cleanup_swapchain() noexcept
@@ -1252,6 +1415,8 @@ bool VulkanRuntime::record_command_buffer(VkCommandBuffer command_buffer,
         return false;
     }
 
+    update_scene(frame_delta_seconds());
+
     VkCommandBufferBeginInfo begin_info{};
     begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -1280,6 +1445,17 @@ bool VulkanRuntime::record_command_buffer(VkCommandBuffer command_buffer,
     render_pass_info.pClearValues = &clear_value;
 
     vkCmdBeginRenderPass(command_buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);
+
+    if (_has_content &&
+        !_sprite_renderer.Draw(command_buffer, static_cast<float>(_sprite_x),
+                               static_cast<float>(_sprite_y),
+                               static_cast<float>(_content.sprite.width),
+                               static_cast<float>(_content.sprite.height)))
+    {
+        LogError("No se pudo dibujar el sprite del paquete.");
+        return false;
+    }
+
     vkCmdEndRenderPass(command_buffer);
 
     return CheckVk(vkEndCommandBuffer(command_buffer), "vkEndCommandBuffer");
@@ -1366,10 +1542,85 @@ void VulkanRuntime::key_callback(GLFWwindow *window, int key, int scancode, int 
     (void)scancode;
     (void)mods;
 
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    auto *runtime = static_cast<VulkanRuntime *>(glfwGetWindowUserPointer(window));
+    if (runtime == nullptr)
     {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+        return;
     }
+
+    const bool PRESSED = action != GLFW_RELEASE;
+    switch (key)
+    {
+    case GLFW_KEY_A:
+    case GLFW_KEY_LEFT:
+        runtime->_input.SetPressed(InputAction::MOVE_LEFT, PRESSED);
+        break;
+    case GLFW_KEY_D:
+    case GLFW_KEY_RIGHT:
+        runtime->_input.SetPressed(InputAction::MOVE_RIGHT, PRESSED);
+        break;
+    case GLFW_KEY_W:
+    case GLFW_KEY_UP:
+        runtime->_input.SetPressed(InputAction::MOVE_UP, PRESSED);
+        break;
+    case GLFW_KEY_S:
+    case GLFW_KEY_DOWN:
+        runtime->_input.SetPressed(InputAction::MOVE_DOWN, PRESSED);
+        break;
+    case GLFW_KEY_ESCAPE:
+        if (action == GLFW_PRESS)
+        {
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void VulkanRuntime::cursor_position_callback(GLFWwindow *window, double cursor_x,
+                                             double cursor_y)
+{
+    auto *runtime = static_cast<VulkanRuntime *>(glfwGetWindowUserPointer(window));
+    if (runtime != nullptr)
+    {
+        runtime->_input.SetCursor(cursor_x, cursor_y);
+    }
+}
+
+void VulkanRuntime::mouse_button_callback(GLFWwindow *window, int button, int action,
+                                          int mods)
+{
+    (void)mods;
+
+    if (button != GLFW_MOUSE_BUTTON_LEFT || action != GLFW_PRESS)
+    {
+        return;
+    }
+
+    auto *runtime = static_cast<VulkanRuntime *>(glfwGetWindowUserPointer(window));
+    if (runtime == nullptr)
+    {
+        return;
+    }
+
+    int window_width = 0;
+    int window_height = 0;
+    int framebuffer_width = 0;
+    int framebuffer_height = 0;
+    glfwGetWindowSize(window, &window_width, &window_height);
+    glfwGetFramebufferSize(window, &framebuffer_width, &framebuffer_height);
+
+    double cursor_x = 0.0;
+    double cursor_y = 0.0;
+    glfwGetCursorPos(window, &cursor_x, &cursor_y);
+
+    const double SCALE_X =
+        window_width > 0 ? static_cast<double>(framebuffer_width) / window_width : 1.0;
+    const double SCALE_Y =
+        window_height > 0 ? static_cast<double>(framebuffer_height) / window_height : 1.0;
+
+    runtime->_input.RequestLeftClick(cursor_x * SCALE_X, cursor_y * SCALE_Y);
 }
 // NOLINTEND(bugprone-easily-swappable-parameters)
 

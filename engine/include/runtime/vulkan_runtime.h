@@ -1,9 +1,14 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 #include <vulkan/vulkan.h>
+
+#include "runtime/content_loader.h"
+#include "runtime/input_state.h"
+#include "runtime/sprite_renderer.h"
 
 struct GLFWwindow;
 
@@ -13,6 +18,8 @@ namespace k_engine::runtime
 struct RuntimeOptions
 {
     std::uint32_t frame_limit = 0;
+    std::string package_path;
+    std::uint64_t level_id = 0;
 };
 
 class VulkanRuntime
@@ -26,7 +33,7 @@ class VulkanRuntime
     VulkanRuntime(VulkanRuntime &&) = delete;
     VulkanRuntime &operator=(VulkanRuntime &&) = delete;
 
-    bool Initialize();
+    bool Initialize(const RuntimeOptions &options);
     int Run(const RuntimeOptions &options);
     void Shutdown() noexcept;
 
@@ -39,6 +46,10 @@ class VulkanRuntime
     static void framebuffer_size_callback(GLFWwindow *window, int width, int height);
     static void key_callback(GLFWwindow *window, int key, int scancode, int action,
                              int mods);
+    static void cursor_position_callback(GLFWwindow *window, double cursor_x,
+                                         double cursor_y);
+    static void mouse_button_callback(GLFWwindow *window, int button, int action,
+                                      int mods);
 
     void handle_debug_message(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
                               VkDebugUtilsMessageTypeFlagsEXT message_types,
@@ -58,10 +69,16 @@ class VulkanRuntime
     bool create_command_pool();
     bool create_command_buffer();
     bool create_sync_objects();
+    bool load_content(const RuntimeOptions &options);
+    bool create_sprite_renderer();
     bool recreate_swapchain();
     bool prepare_frame(std::uint32_t &image_index, bool &frame_skipped);
     bool submit_frame(std::uint32_t image_index, VkResult &present_result);
     bool handle_frame_result(VkResult present_result);
+
+    void update_scene(float delta_seconds);
+    float frame_delta_seconds() noexcept;
+    void clamp_sprite_position();
 
     void cleanup_swapchain() noexcept;
     void destroy_sync_objects() noexcept;
@@ -73,6 +90,7 @@ class VulkanRuntime
     bool _validation_enabled = false;
     bool _framebuffer_resized = false;
     bool _shutdown_complete = false;
+    bool _has_content = false;
 
     VkInstance _instance = VK_NULL_HANDLE;
     VkDebugUtilsMessengerEXT _debug_messenger = VK_NULL_HANDLE;
@@ -99,6 +117,14 @@ class VulkanRuntime
     VkSemaphore _image_available_semaphore = VK_NULL_HANDLE;
     std::vector<VkSemaphore> _render_finished_semaphores;
     VkFence _in_flight_fence = VK_NULL_HANDLE;
+
+    LoadedContent _content;
+    SpriteRenderer _sprite_renderer;
+    InputState _input;
+
+    double _sprite_x = 0.0;
+    double _sprite_y = 0.0;
+    double _last_frame_time = 0.0;
 
     std::uint32_t _engine_error_count = 0;
     std::uint32_t _engine_warning_count = 0;
