@@ -13,6 +13,24 @@ target_link_libraries(k_engine
         stb
 )
 
+# Prototipo técnico Vulkan de T1: ventana X11, superficie y presentación.
+add_executable(k_engine_runtime
+    src/runtime/main.cpp
+    src/runtime/vulkan_runtime.cpp
+)
+
+target_include_directories(k_engine_runtime
+    PRIVATE
+        src
+)
+
+target_link_libraries(k_engine_runtime
+    PRIVATE
+        k_engine
+        glfw
+        Vulkan::Vulkan
+)
+
 # FlatBuffers: generación de código y pruebas del motor.
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
