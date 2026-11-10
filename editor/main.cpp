@@ -1,11 +1,36 @@
 #include <iostream>
+#include <string>
 
-#include "k_engine.h"
+#include "editor/app.h"
+#include "editor/cli.h"
 
-int main()
+int main(int argc, char **argv)
 {
-    std::cout << "K_engine " << k_engine::VersionString() << '\n';
-    std::cout << "Editor iniciado.\n";
+    k_engine::editor::EditorOptions options;
+    std::string error;
+    const k_engine::editor::CliResult RESULT =
+        k_engine::editor::ParseArguments(argc, argv, options, error);
+    if (RESULT == k_engine::editor::CliResult::HELP)
+    {
+        k_engine::editor::PrintUsage();
+        return 0;
+    }
+    if (RESULT == k_engine::editor::CliResult::ERROR)
+    {
+        std::cerr << "Error: " << error << '\n';
+        k_engine::editor::PrintUsage();
+        return 2;
+    }
 
-    return 0;
+    k_engine::editor::EditorApp app;
+    if (!app.Initialize(options))
+    {
+        std::cerr << "Error: no se pudo iniciar el editor.\n";
+        app.Shutdown();
+        return 1;
+    }
+
+    const int RUN_RESULT = app.Run(options);
+    app.Shutdown();
+    return RUN_RESULT;
 }

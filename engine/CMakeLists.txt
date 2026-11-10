@@ -11,6 +11,7 @@ add_library(k_engine STATIC
     src/stb_impl.cpp
     src/resource/crc32.cpp
     src/resource/pak_reader.cpp
+    src/ui/builder.cpp
 )
 
 target_include_directories(k_engine
@@ -242,6 +243,19 @@ add_test(
 )
 set_tests_properties(k_engine_pak_reader_test PROPERTIES
     FIXTURES_REQUIRED k_engine_t2_fixture
+)
+
+add_executable(k_engine_ui_builder_test
+    test/ui_builder_test.cpp
+)
+target_link_libraries(k_engine_ui_builder_test
+    PRIVATE
+        k_engine
+        doctest::doctest
+)
+add_test(
+    NAME k_engine_ui_builder_test
+    COMMAND k_engine_ui_builder_test
 )
 
 add_executable(k_engine_runtime_content_test

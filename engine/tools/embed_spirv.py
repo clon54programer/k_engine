@@ -25,9 +25,10 @@ def format_array(name: str, words: list[int]) -> str:
 
 
 def main() -> int:
-    if len(sys.argv) != 4:
+    if len(sys.argv) not in (4, 5, 6):
         print(
-            "Uso: embed_spirv.py <cabecera_salida> <vert.spv> <frag.spv>",
+            "Uso: embed_spirv.py <cabecera_salida> <vert.spv> <frag.spv> "
+            "[namespace] [prefijo]",
             file=sys.stderr,
         )
         return 2
@@ -35,18 +36,21 @@ def main() -> int:
     output = Path(sys.argv[1])
     vertex_words = read_words(Path(sys.argv[2]))
     fragment_words = read_words(Path(sys.argv[3]))
+    namespace = sys.argv[4] if len(sys.argv) >= 5 else "k_engine::runtime::shaders"
+    prefix = sys.argv[5] if len(sys.argv) >= 6 else "SPRITE"
 
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
         "#pragma once\n\n"
         "#include <array>\n"
         "#include <cstdint>\n\n"
-        "namespace k_engine::runtime::shaders\n"
+        f"namespace {namespace}\n"
         "{\n\n"
-        + format_array("SPRITE_VERT", vertex_words)
+        + format_array(f"{prefix}_VERT", vertex_words)
         + "\n"
-        + format_array("SPRITE_FRAG", fragment_words)
-        + "\n} // namespace k_engine::runtime::shaders\n",
+        + format_array(f"{prefix}_FRAG", fragment_words)
+        + "\n"
+        + f"}} // namespace {namespace}\n",
         encoding="utf-8",
     )
     print(f"Cabecera de shaders generada: {output}")

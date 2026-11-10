@@ -143,7 +143,9 @@ Estados permitidos: `PENDIENTE`, `EN CURSO`, `BLOQUEADA`, `COMPLETADA`.
 
 ### T3 — Editor Linux mínimo
 
-- **Estado:** PENDIENTE
+- **Estado:** COMPLETADA
+- **Completado:** 2026-11-09
+- **Reporte:** [docs/report-t3.md](docs/report-t3.md)
 - **Estimación:** 40 h
 - **Dependencias:** T1; T0 para los formatos JSON
 - **Trabajo:**
