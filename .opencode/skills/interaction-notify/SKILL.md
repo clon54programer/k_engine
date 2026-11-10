@@ -1,5 +1,5 @@
 ---
-name: Interaction Notify
+name: interaction-notify
 description: Notifica al usuario por escritorio cuando OpenCode necesite una interacción (question, permisos ask, bloqueos o acciones manuales). Úsala siempre antes de question o de cualquier tool que pueda abrir un permiso.
 ---
 
