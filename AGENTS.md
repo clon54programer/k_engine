@@ -226,6 +226,23 @@ Nunca reviertas cambios del usuario ni uses comandos destructivos.
 - No delegues trabajo a subagentes salvo que el usuario lo solicite
   explícitamente.
 
+## Notificaciones De Interacción
+
+Antes de invocar `question` o cualquier herramienta que pueda resolver a `ask`
+(permisos de edición, `external_directory`, `subagent`, `skill` o MCP), carga la
+skill `interaction-notify`.
+
+Si el marcador del plugin `interaction-notify` está activo, el script de
+respaldo no notifica para evitar duplicados. Ejecuta siempre el respaldo con
+`--respect-plugin`:
+
+```bash
+bash .opencode/skills/interaction-notify/scripts/notify.sh attention "motivo breve" --respect-plugin --quiet
+```
+
+No notifiques acciones `allow` ni `deny`. No incluyas secretos, valores de
+variables de entorno ni comandos completos en el motivo.
+
 ## Criterios Del MVP
 
 - Mantén `engine/`, `editor/` y `packer/` en objetivos de compilación separados
