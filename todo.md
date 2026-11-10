@@ -111,7 +111,9 @@ Estados permitidos: `PENDIENTE`, `EN CURSO`, `BLOQUEADA`, `COMPLETADA`.
 
 ### T1 — Prototipo técnico Vulkan Linux
 
-- **Estado:** PENDIENTE
+- **Estado:** COMPLETADA
+- **Completado:** 2026-11-09
+- **Reporte:** [docs/report-t1.md](docs/report-t1.md)
 - **Estimación:** 20 h
 - **Dependencias:** T0
 - **Trabajo:**
@@ -120,6 +122,7 @@ Estados permitidos: `PENDIENTE`, `EN CURSO`, `BLOQUEADA`, `COMPLETADA`.
   - Habilitar `VK_LAYER_KHRONOS_validation` en desarrollo y recibir mensajes mediante `VK_EXT_debug_utils`.
   - Presentar una imagen de prueba y responder al cierre de ventana.
 - **Finaliza cuando:** el prototipo presenta al menos un frame en la GPU AMD; la capa de validación está activa; no hay errores ni advertencias atribuibles al engine. Registrar por separado las advertencias del ICD sobre `VK_KHR_display`.
+- **Verificación:** `ctest --test-dir build --output-on-failure` pasa 5/5; `k_engine_runtime --frames 1` y `--frames 300` presentan en la AMD `1002:15e7` con `VK_LAYER_KHRONOS_validation` y 0 errores/advertencias del engine; resize, minimizado y cierre con `wmctrl` terminan con código 0; build limpio en `/tmp/opencode/k_engine_t1_clean_build` pasa 5/5; build Release termina con código 0; `clang-format` y `clang-tidy` pasan.
 - **Punto de control:** si no se presenta una imagen después de esta estimación, detener la expansión del runtime/editor y resolver primero la integración Vulkan/GLFW/X11.
 
 ### T2 — Runtime Linux mínimo
